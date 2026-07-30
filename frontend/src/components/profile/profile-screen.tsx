@@ -85,6 +85,7 @@ type ProfileContentProps = {
   onOpenProgress: () => void;
   onOpenAchievements: () => void;
   onOpenProfile: () => void;
+  onOpenSettings: () => void;
   onLogout: () => void;
 };
 
@@ -99,6 +100,7 @@ function ProfileContent({
   onOpenProgress,
   onOpenAchievements,
   onOpenProfile,
+  onOpenSettings,
   onLogout,
 }: ProfileContentProps) {
   const achievements = achievementsFor(progress);
@@ -111,8 +113,8 @@ function ProfileContent({
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
         <View style={styles.topBar}>
           <ThemedText type="headline" style={styles.title}>Profile</ThemedText>
-          <Pressable style={({ pressed }) => [styles.settingsButton, pressed && styles.pressed]}>
-            <ThemedText style={styles.settingsIcon}>*</ThemedText>
+          <Pressable onPress={onOpenSettings} style={({ pressed }) => [styles.settingsButton, pressed && styles.pressed]}>
+            <SymbolView name={'gearshape' as any} size={18} tintColor="#64748B" fallback={<ThemedText style={styles.settingsIcon}>*</ThemedText>} />
             <ThemedText type="smallBold" style={styles.settingsText}>Settings</ThemedText>
           </Pressable>
         </View>
@@ -372,6 +374,7 @@ export function ProfileScreen() {
       onOpenProgress={() => router.push('/progress')}
       onOpenAchievements={() => router.push('/achievements')}
       onOpenProfile={() => router.push('/profile')}
+      onOpenSettings={() => router.push('/settings')}
       onLogout={logout}
     />
   );

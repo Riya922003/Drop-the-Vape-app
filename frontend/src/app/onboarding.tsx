@@ -90,7 +90,7 @@ export default function OnboardingRoute() {
 const styles = StyleSheet.create({
   screen: {
     gap: Spacing.three,
-    backgroundColor: '#F5FBFF',
+    backgroundColor: '#FFFFFF',
   },
   artworkFrame: {
     flex: 1,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   title: {
     maxWidth: 340,
     textAlign: 'center',
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   description: {
     maxWidth: 330,
@@ -128,10 +128,10 @@ const styles = StyleSheet.create({
     width: 9,
     height: 9,
     borderRadius: 5,
-    backgroundColor: '#CFE0F2',
+    backgroundColor: '#EAF5FF',
   },
   progressDotActive: {
-    backgroundColor: '#2488F9',
+    backgroundColor: '#3B82F6',
   },
   actions: {
     gap: Spacing.two,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2688F7',
+    backgroundColor: '#3B82F6',
     ...Shadow.soft,
   },
   primaryButtonText: {

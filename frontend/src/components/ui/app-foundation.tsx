@@ -158,7 +158,7 @@ export function AchievementBadge({ label, unlocked }: AchievementBadgeProps) {
       style={[
         styles.badge,
         {
-          backgroundColor: unlocked ? '#EAFBEF' : theme.backgroundElement,
+          backgroundColor: unlocked ? '#EAF5FF' : theme.backgroundElement,
           borderColor: unlocked ? theme.accent : theme.border,
         },
       ]}>

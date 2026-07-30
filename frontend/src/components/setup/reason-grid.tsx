@@ -1,4 +1,4 @@
-﻿import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -18,46 +18,46 @@ function getOptionIcon(option: SetupOption) {
   const title = option.title.toLowerCase();
 
   if (option.value === 'health') {
-    return { label: 'H', backgroundColor: '#FFECEC', color: '#FF5D5D' };
+    return { label: 'H', backgroundColor: '#FFF7F7', color: '#DC2626' };
   }
 
   if (option.value === 'money') {
-    return { label: '$', backgroundColor: '#ECF8D8', color: '#67B741' };
+    return { label: '$', backgroundColor: '#EAF5FF', color: '#22C55E' };
   }
 
   if (option.value === 'family') {
-    return { label: 'F', backgroundColor: '#FFF0DE', color: '#F59E0B' };
+    return { label: 'F', backgroundColor: '#EAF5FF', color: '#22C55E' };
   }
 
   if (option.value === 'control') {
-    return { label: 'C', backgroundColor: '#FFF3CF', color: '#F2A51A' };
+    return { label: 'C', backgroundColor: '#EAF5FF', color: '#22C55E' };
   }
 
   if (option.value === 'breathing') {
-    return { label: 'B', backgroundColor: '#E7F5FF', color: '#3B82F6' };
+    return { label: 'B', backgroundColor: '#EAF5FF', color: '#3B82F6' };
   }
 
   if (title.includes('few')) {
-    return { label: 'W', backgroundColor: '#E7F1FF', color: '#3B82F6' };
+    return { label: 'W', backgroundColor: '#EAF5FF', color: '#3B82F6' };
   }
 
   if (title.includes('1-3')) {
-    return { label: 'T', backgroundColor: '#EAFBEF', color: '#22C55E' };
+    return { label: 'T', backgroundColor: '#EAF5FF', color: '#22C55E' };
   }
 
   if (title.includes('4-10')) {
-    return { label: 'M', backgroundColor: '#FFF4D8', color: '#F59E0B' };
+    return { label: 'M', backgroundColor: '#EAF5FF', color: '#22C55E' };
   }
 
   if (title.includes('more than')) {
-    return { label: 'H', backgroundColor: '#FFECEC', color: '#FF5D5D' };
+    return { label: 'H', backgroundColor: '#FFF7F7', color: '#DC2626' };
   }
 
   if (title.includes('constantly')) {
-    return { label: 'A', backgroundColor: '#F0E8FF', color: '#7C3AED' };
+    return { label: 'A', backgroundColor: '#EAF5FF', color: '#3B82F6' };
   }
 
-  return { label: '?', backgroundColor: '#E7F5FF', color: '#3B82F6' };
+  return { label: '?', backgroundColor: '#EAF5FF', color: '#3B82F6' };
 }
 
 export function SetupOptionGrid({ options, value, onChange }: SetupOptionGridProps) {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
     borderWidth: 1,
     borderRadius: Radius.medium,
-    borderColor: '#DDEAF7',
+    borderColor: '#EAF5FF',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: Spacing.two,
     paddingVertical: Spacing.three,
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   cardSelected: {
     borderColor: '#3B82F6',
-    backgroundColor: '#F8FBFF',
+    backgroundColor: '#FFFFFF',
   },
   icon: {
     width: 54,
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   title: {
     maxWidth: 112,
     minHeight: 40,
-    color: '#0B1F44',
+    color: '#1E293B',
     textAlign: 'center',
     lineHeight: 18,
   },

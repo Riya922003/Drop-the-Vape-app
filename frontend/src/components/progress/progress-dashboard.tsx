@@ -144,10 +144,10 @@ export function ProgressDashboard({ progress, error, isRefreshing, onRefresh, on
         {error ? <View style={styles.errorCard}><ThemedText style={styles.error}>{error}</ThemedText><Button label="Try again" onPress={onRetry} /></View> : null}
 
         <View style={styles.metricGrid}>
-          <MetricCard image={dashboardIcons[0]} title="Health Recovery" label="Lung recovery" value={`${recovery}%`} color="#FF5570" progress={recovery} />
-          <MetricCard image={dashboardIcons[1]} title="Money Saved" value={money(progress.moneySaved)} color="#21B873" />
-          <MetricCard image={dashboardIcons[2]} title="Puffs Avoided" value={String(progress.vapesAvoided)} color="#8B5CF6" />
-          <MetricCard image={dashboardIcons[3]} title="Time Reclaimed" value={`${reclaimedHours(progress.vapesAvoided)} hours`} color="#1685FF" />
+          <MetricCard image={dashboardIcons[0]} title="Health Recovery" label="Lung recovery" value={`${recovery}%`} color="#22C55E" progress={recovery} />
+          <MetricCard image={dashboardIcons[1]} title="Money Saved" value={money(progress.moneySaved)} color="#22C55E" />
+          <MetricCard image={dashboardIcons[2]} title="Puffs Avoided" value={String(progress.vapesAvoided)} color="#3B82F6" />
+          <MetricCard image={dashboardIcons[3]} title="Time Reclaimed" value={`${reclaimedHours(progress.vapesAvoided)} hours`} color="#3B82F6" />
         </View>
 
         <View style={styles.twoColumnRow}>
@@ -176,9 +176,9 @@ export function ProgressDashboard({ progress, error, isRefreshing, onRefresh, on
           <View style={styles.segmentRow}><Segment active label="7 Days" /><Segment label="30 Days" /><Segment label="90 Days" /></View>
           <ProgressGraph data={chartData} />
           <View style={styles.legendRow}>
-            <Legend color="#1685FF" label="Daily Streak" />
-            <Legend color="#22B989" label="Cravings Completed" />
-            <Legend color="#8B5CF6" label="Check-ins" />
+            <Legend color="#3B82F6" label="Daily Streak" />
+            <Legend color="#22C55E" label="Cravings Completed" />
+            <Legend color="#3B82F6" label="Check-ins" />
           </View>
         </View>
 
@@ -225,7 +225,7 @@ function ProgressGraph({ data }: { data: ReturnType<typeof graphSeries> }) {
   const maxValue = Math.max(1, ...data.flatMap((item) => [item.streak, item.cravings, item.checkins]));
   const toPoint = (value: number, index: number) => ({ x: (index / (data.length - 1)) * width, y: height - (value / maxValue) * height });
 
-  return <View style={[styles.graphPlot, { width, height: height + 20 }]}>{[0, 1, 2, 3].map((line) => <View key={line} style={[styles.gridLine, { top: line * 28 }]} />)}<GraphLine color="#1685FF" points={data.map((item, index) => toPoint(item.streak, index))} /><GraphLine color="#22B989" points={data.map((item, index) => toPoint(item.cravings, index))} /><GraphLine color="#8B5CF6" points={data.map((item, index) => toPoint(item.checkins, index))} /><View style={styles.xAxis}>{data.map((item) => <ThemedText key={item.label} style={styles.axisLabel}>{item.label}</ThemedText>)}</View></View>;
+  return <View style={[styles.graphPlot, { width, height: height + 20 }]}>{[0, 1, 2, 3].map((line) => <View key={line} style={[styles.gridLine, { top: line * 28 }]} />)}<GraphLine color="#3B82F6" points={data.map((item, index) => toPoint(item.streak, index))} /><GraphLine color="#22C55E" points={data.map((item, index) => toPoint(item.cravings, index))} /><GraphLine color="#3B82F6" points={data.map((item, index) => toPoint(item.checkins, index))} /><View style={styles.xAxis}>{data.map((item) => <ThemedText key={item.label} style={styles.axisLabel}>{item.label}</ThemedText>)}</View></View>;
 }
 
 function GraphLine({ points, color }: { points: { x: number; y: number }[]; color: string }) {
@@ -249,31 +249,31 @@ function Legend({ color, label }: { color: string; label: string }) {
 }
 
 function TabButton({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
-  const color = active ? '#1685FF' : '#8B98AF';
+  const color = active ? '#3B82F6' : '#64748B';
   return <Pressable onPress={onPress} style={styles.tabButton}><View style={styles.tabIconWrap}><SymbolView name={icon as any} size={19} tintColor={color} fallback={<ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{fallback}</ThemedText>} /></View><ThemedText style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText></Pressable>;
 }
 
 const styles = StyleSheet.create({
-  screen: { backgroundColor: '#F4FAFF', paddingHorizontal: Spacing.three, paddingTop: Spacing.three, paddingBottom: 0 },
+  screen: { backgroundColor: '#FFFFFF', paddingHorizontal: Spacing.three, paddingTop: Spacing.three, paddingBottom: 0 },
   content: { gap: Spacing.three, paddingBottom: 92 },
-  heroHeader: { minHeight: 124, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', overflow: 'hidden', borderRadius: 18, backgroundColor: '#F7FBFF', paddingLeft: Spacing.one },
+  heroHeader: { minHeight: 124, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', overflow: 'hidden', borderRadius: 18, backgroundColor: '#FFFFFF', paddingLeft: Spacing.one },
   heroCopy: { flex: 1, gap: Spacing.two },
-  title: { color: '#071B44', fontSize: 31, lineHeight: 36 },
+  title: { color: '#1E293B', fontSize: 31, lineHeight: 36 },
   subtitle: { maxWidth: 210, lineHeight: 18 },
-  heroImage: { width: 174, height: 124, marginRight: -22, backgroundColor: '#F7FBFF' },
-  streakPanel: { minHeight: 124, borderRadius: 16, backgroundColor: '#082863', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.three, ...Shadow.soft },
+  heroImage: { width: 174, height: 124, marginRight: -22, backgroundColor: '#FFFFFF' },
+  streakPanel: { minHeight: 124, borderRadius: 16, backgroundColor: '#1E293B', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.three, ...Shadow.soft },
   streakMain: { flex: 1, gap: Spacing.three },
   streakTitle: { color: '#FFFFFF', fontSize: 20 },
   streakStats: { flexDirection: 'row', alignItems: 'center', gap: Spacing.three },
   miniStat: { gap: Spacing.one },
-  miniLabel: { color: '#90A8D9', fontSize: 11 },
+  miniLabel: { color: '#64748B', fontSize: 11 },
   miniValue: { color: '#FFFFFF', fontSize: 24, lineHeight: 28 },
-  divider: { width: 1, height: 44, backgroundColor: '#31528B' },
-  ring: { width: 94, height: 94, borderRadius: 47, borderWidth: 10, borderColor: '#1D4480', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  ringFill: { position: 'absolute', width: 92, height: 92, borderRadius: 46, borderRightWidth: 10, borderRightColor: '#2D8CFF' },
-  ringCenter: { width: 70, height: 70, borderRadius: 35, backgroundColor: '#082863', alignItems: 'center', justifyContent: 'center' },
+  divider: { width: 1, height: 44, backgroundColor: '#64748B' },
+  ring: { width: 94, height: 94, borderRadius: 47, borderWidth: 10, borderColor: '#1E293B', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  ringFill: { position: 'absolute', width: 92, height: 92, borderRadius: 46, borderRightWidth: 10, borderRightColor: '#3B82F6' },
+  ringCenter: { width: 70, height: 70, borderRadius: 35, backgroundColor: '#1E293B', alignItems: 'center', justifyContent: 'center' },
   ringValue: { color: '#FFFFFF', fontSize: 24, lineHeight: 28 },
-  ringLabel: { color: '#D8E8FF', fontSize: 9, lineHeight: 11, textAlign: 'center' },
+  ringLabel: { color: '#EAF5FF', fontSize: 9, lineHeight: 11, textAlign: 'center' },
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   error: { color: '#DC2626', textAlign: 'center' },
   metricGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },
@@ -281,60 +281,60 @@ const styles = StyleSheet.create({
   metricIcon: { width: 43, height: 43, borderRadius: 12, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   metricImage: { width: 34, height: 34 },
   metricText: { flex: 1, gap: Spacing.one },
-  metricTitle: { color: '#071B44', fontSize: 11 },
-  metricLabel: { color: '#6C7894', fontSize: 10 },
+  metricTitle: { color: '#1E293B', fontSize: 11 },
+  metricLabel: { color: '#64748B', fontSize: 10 },
   metricValue: { fontSize: 20, lineHeight: 24 },
-  progressTrack: { height: 7, borderRadius: 4, backgroundColor: '#E7EDF6', overflow: 'hidden', marginTop: Spacing.two },
+  progressTrack: { height: 7, borderRadius: 4, backgroundColor: '#EAF5FF', overflow: 'hidden', marginTop: Spacing.two },
   progressFill: { height: 7, borderRadius: 4 },
   twoColumnRow: { flexDirection: 'row', gap: Spacing.two },
   card: { borderRadius: 14, backgroundColor: '#FFFFFF', padding: Spacing.three, ...Shadow.soft },
   timelineCard: { flex: 0.84, minHeight: 242 },
   achievementCard: { flex: 1.16, minHeight: 242, gap: Spacing.three },
-  cardTitle: { color: '#071B44', fontSize: 13 },
+  cardTitle: { color: '#1E293B', fontSize: 13 },
   cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  linkText: { color: '#1685FF', fontSize: 10 },
-  verticalLine: { position: 'absolute', left: 25, top: 55, bottom: 28, width: 2, backgroundColor: '#BFEBD2' },
+  linkText: { color: '#3B82F6', fontSize: 10 },
+  verticalLine: { position: 'absolute', left: 25, top: 55, bottom: 28, width: 2, backgroundColor: '#EAF5FF' },
   healthItem: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.two, marginTop: Spacing.three },
-  healthDot: { width: 20, height: 20, borderRadius: 10, backgroundColor: '#4EC37D', alignItems: 'center', justifyContent: 'center', zIndex: 1 },
-  healthDotNext: { backgroundColor: '#FFFFFF', borderWidth: 4, borderColor: '#56A7FF' },
+  healthDot: { width: 20, height: 20, borderRadius: 10, backgroundColor: '#22C55E', alignItems: 'center', justifyContent: 'center', zIndex: 1 },
+  healthDotNext: { backgroundColor: '#FFFFFF', borderWidth: 4, borderColor: '#3B82F6' },
   healthDotText: { color: '#FFFFFF', fontSize: 11, fontWeight: '900' },
-  healthTitle: { color: '#071B44', fontSize: 11, lineHeight: 14 },
-  nextTitle: { color: '#1685FF' },
-  healthBody: { color: '#687897', fontSize: 9, lineHeight: 12, maxWidth: 100 },
+  healthTitle: { color: '#1E293B', fontSize: 11, lineHeight: 14 },
+  nextTitle: { color: '#3B82F6' },
+  healthBody: { color: '#64748B', fontSize: 9, lineHeight: 12, maxWidth: 100 },
   achievementRow: { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.two },
   achievementItem: { flex: 1, alignItems: 'center', gap: Spacing.one },
-  achievementBadge: { width: 54, height: 54, borderRadius: 27, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F3F7FF', overflow: 'hidden' },
+  achievementBadge: { width: 54, height: 54, borderRadius: 27, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF5FF', overflow: 'hidden' },
   achievementImage: { width: 52, height: 52 },
-  achievementLabel: { color: '#071B44', fontSize: 9, lineHeight: 12, textAlign: 'center' },
+  achievementLabel: { color: '#1E293B', fontSize: 9, lineHeight: 12, textAlign: 'center' },
   locked: { opacity: 0.55 },
-  lockText: { color: '#94A3B8', fontSize: 23 },
+  lockText: { color: '#64748B', fontSize: 23 },
   graphCard: { borderRadius: 14, backgroundColor: '#FFFFFF', padding: Spacing.three, gap: Spacing.two, ...Shadow.soft },
   segmentRow: { flexDirection: 'row', gap: Spacing.two },
-  segmentButton: { minWidth: 58, minHeight: 24, borderRadius: 7, borderWidth: 1, borderColor: '#D8E5F5', alignItems: 'center', justifyContent: 'center' },
-  segmentButtonActive: { borderColor: '#1685FF', backgroundColor: '#EEF6FF' },
-  segmentLabel: { color: '#6C7894', fontSize: 10 },
-  segmentLabelActive: { color: '#1685FF', fontWeight: '800' },
+  segmentButton: { minWidth: 58, minHeight: 24, borderRadius: 7, borderWidth: 1, borderColor: '#EAF5FF', alignItems: 'center', justifyContent: 'center' },
+  segmentButtonActive: { borderColor: '#3B82F6', backgroundColor: '#EAF5FF' },
+  segmentLabel: { color: '#64748B', fontSize: 10 },
+  segmentLabelActive: { color: '#3B82F6', fontWeight: '800' },
   graphPlot: { alignSelf: 'center', marginTop: Spacing.two, position: 'relative' },
-  gridLine: { position: 'absolute', left: 0, right: 0, height: 1, backgroundColor: '#E6EEF8' },
+  gridLine: { position: 'absolute', left: 0, right: 0, height: 1, backgroundColor: '#EAF5FF' },
   segment: { position: 'absolute', height: 2, borderRadius: 2, transformOrigin: 'left center' },
   point: { position: 'absolute', width: 7, height: 7, borderRadius: 4, borderWidth: 2, backgroundColor: '#FFFFFF' },
   xAxis: { position: 'absolute', left: -10, right: -10, bottom: 0, flexDirection: 'row', justifyContent: 'space-between' },
-  axisLabel: { color: '#8794AD', fontSize: 8 },
+  axisLabel: { color: '#64748B', fontSize: 8 },
   legendRow: { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.two },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: Spacing.one },
   legendDot: { width: 7, height: 7, borderRadius: 4 },
-  legendText: { color: '#50607A', fontSize: 9 },
-  encourageCard: { minHeight: 86, borderRadius: 16, backgroundColor: '#E8F5FF', flexDirection: 'row', alignItems: 'center', gap: Spacing.three, padding: Spacing.three, overflow: 'hidden', ...Shadow.soft },
+  legendText: { color: '#64748B', fontSize: 9 },
+  encourageCard: { minHeight: 86, borderRadius: 16, backgroundColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', gap: Spacing.three, padding: Spacing.three, overflow: 'hidden', ...Shadow.soft },
   mountain: { width: 92, height: 78, marginLeft: -4 },
   encourageCopy: { flex: 1 },
-  encourageTitle: { color: '#1685FF', fontSize: 15 },
-  heart: { color: '#1685FF', fontSize: 38 },
-  bottomTabs: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: 72, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#DCEBFA', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
+  encourageTitle: { color: '#3B82F6', fontSize: 15 },
+  heart: { color: '#3B82F6', fontSize: 38 },
+  bottomTabs: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: 72, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
   tabButton: { alignItems: 'center', justifyContent: 'center', gap: Spacing.one, minWidth: 70 },
   tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
-  tabIcon: { color: '#8B98AF', fontSize: 20 },
-  tabLabel: { color: '#8B98AF', fontSize: 10 },
-  tabActive: { color: '#1685FF', fontWeight: '800' },
+  tabIcon: { color: '#64748B', fontSize: 20 },
+  tabLabel: { color: '#64748B', fontSize: 10 },
+  tabActive: { color: '#3B82F6', fontWeight: '800' },
 });
 
 

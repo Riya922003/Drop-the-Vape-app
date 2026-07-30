@@ -1,4 +1,4 @@
-﻿import { Image } from 'expo-image';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -48,7 +48,7 @@ export default function WelcomeRoute() {
 const styles = StyleSheet.create({
   screen: {
     gap: Spacing.three,
-    backgroundColor: '#F5FBFF',
+    backgroundColor: '#FFFFFF',
   },
   artworkFrame: {
     flex: 1,
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   title: {
     maxWidth: 340,
     textAlign: 'center',
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   description: {
     maxWidth: 335,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2688F7',
+    backgroundColor: '#3B82F6',
     ...Shadow.soft,
   },
   primaryButtonText: {

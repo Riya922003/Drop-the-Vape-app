@@ -1,4 +1,4 @@
-﻿import { Image } from 'expo-image';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#EAF5FF',
     borderWidth: 1,
-    borderColor: '#BBD8FF',
+    borderColor: '#EAF5FF',
   },
   logoIcon: {
     color: '#3B82F6',
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   logoText: {
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   copy: {
     gap: Spacing.one,
@@ -331,12 +331,12 @@ const styles = StyleSheet.create({
   title: {
     maxWidth: 340,
     textAlign: 'center',
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   introTitle: {
     maxWidth: 320,
     textAlign: 'center',
-    color: '#0B1F44',
+    color: '#1E293B',
     fontSize: 31,
     lineHeight: 35,
   },
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   referenceTitle: {
     maxWidth: 300,
     textAlign: 'center',
-    color: '#0B1F44',
+    color: '#1E293B',
     fontSize: 30,
     lineHeight: 34,
   },
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#DDEAF7',
+    borderColor: '#EAF5FF',
     ...Shadow.soft,
   },
   error: {

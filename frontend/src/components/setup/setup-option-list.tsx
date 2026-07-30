@@ -1,4 +1,4 @@
-﻿import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -68,14 +68,14 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     borderWidth: 1,
     borderRadius: Radius.medium,
-    borderColor: '#DDEAF7',
+    borderColor: '#EAF5FF',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: Spacing.three,
     ...Shadow.soft,
   },
   rowSelected: {
     borderColor: '#3B82F6',
-    backgroundColor: '#F8FBFF',
+    backgroundColor: '#FFFFFF',
   },
   iconWrap: {
     width: 42,
@@ -83,13 +83,13 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E7F1FF',
+    backgroundColor: '#EAF5FF',
   },
   iconText: {
     color: '#3B82F6',
   },
   title: {
     flex: 1,
-    color: '#0B1F44',
+    color: '#1E293B',
   },
 });

@@ -30,10 +30,10 @@ const achievementIcons = [
 ];
 
 const healthTimelineRules = [
-  { image: dashboardIcons[0], title: '20 mins', description: 'Heart rate normalizes', thresholdDays: 0, color: '#58C55C' },
+  { image: dashboardIcons[0], title: '20 mins', description: 'Heart rate normalizes', thresholdDays: 0, color: '#22C55E' },
   { image: dashboardIcons[1], title: '2-12 weeks', description: 'Better lung function', thresholdDays: 14, color: '#3B82F6' },
-  { image: dashboardIcons[2], title: '3-9 months', description: 'Better stamina & energy', thresholdDays: 90, color: '#94A3B8' },
-  { image: dashboardIcons[3], title: '1-5 years', description: 'Health risks drop down', thresholdDays: 365, color: '#94A3B8' },
+  { image: dashboardIcons[2], title: '3-9 months', description: 'Better stamina & energy', thresholdDays: 90, color: '#64748B' },
+  { image: dashboardIcons[3], title: '1-5 years', description: 'Health risks drop down', thresholdDays: 365, color: '#64748B' },
 ];
 
 const fallbackAchievements: ProgressMilestone[] = [
@@ -175,14 +175,14 @@ function MetricCard({ image, label, value, subLabel, color }: { image: number; l
 }
 
 function TimelineItem({ image, title, description, active, color }: { image: number; title: string; description: string; active?: boolean; color: string }) {
-  return <View style={styles.timelineItem}><View style={[styles.timelineIcon, active && styles.timelineIconActive, { borderColor: active ? color : '#DDEAF7' }]}>{active ? <View style={[styles.activeDot, { backgroundColor: color }]} /> : null}<Image source={image} style={styles.timelineImage} contentFit="contain" /></View><ThemedText type="smallBold" style={styles.timelineTitle}>{title}</ThemedText><ThemedText type="small" style={styles.timelineDescription}>{description}</ThemedText></View>;
+  return <View style={styles.timelineItem}><View style={[styles.timelineIcon, active && styles.timelineIconActive, { borderColor: active ? color : '#EAF5FF' }]}>{active ? <View style={[styles.activeDot, { backgroundColor: color }]} /> : null}<Image source={image} style={styles.timelineImage} contentFit="contain" /></View><ThemedText type="smallBold" style={styles.timelineTitle}>{title}</ThemedText><ThemedText type="small" style={styles.timelineDescription}>{description}</ThemedText></View>;
 }
 
 function AchievementTile({ item, index }: { item: ProgressMilestone; index: number }) {
-  const colors = ['#55B85A', '#5B8EF7', '#A855F7', '#F59E0B'];
-  const color = item.unlocked ? colors[index % colors.length] : '#CBD5E1';
+  const colors = ['#22C55E', '#3B82F6', '#3B82F6', '#22C55E'];
+  const color = item.unlocked ? colors[index % colors.length] : '#64748B';
   const icon = achievementIconByKey[item.key] ?? achievementIcons[index % achievementIcons.length];
-  return <View style={[styles.achievementTile, !item.unlocked && styles.achievementTileLocked]}><View style={[styles.badgeShape, { borderColor: color, backgroundColor: item.unlocked ? `${color}22` : '#F1F5F9' }]}><Image source={icon} style={[styles.badgeImage, !item.unlocked && styles.badgeImageLocked]} contentFit="contain" /></View><ThemedText type="smallBold" style={styles.achievementTitle}>{item.label}</ThemedText><ThemedText type="small" themeColor="textSecondary" style={styles.achievementDescription}>{item.description}</ThemedText></View>;
+  return <View style={[styles.achievementTile, !item.unlocked && styles.achievementTileLocked]}><View style={[styles.badgeShape, { borderColor: color, backgroundColor: item.unlocked ? `${color}22` : '#EAF5FF' }]}><Image source={icon} style={[styles.badgeImage, !item.unlocked && styles.badgeImageLocked]} contentFit="contain" /></View><ThemedText type="smallBold" style={styles.achievementTitle}>{item.label}</ThemedText><ThemedText type="small" themeColor="textSecondary" style={styles.achievementDescription}>{item.description}</ThemedText></View>;
 }
 
 function InfoCard({ title, body, accent, image, action, onPress }: { title: string; body: string; accent: string; image: number; action?: string; onPress?: () => void }) {
@@ -190,82 +190,82 @@ function InfoCard({ title, body, accent, image, action, onPress }: { title: stri
 }
 
 function TabItem({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
-  const color = active ? '#1685FF' : '#94A3B8';
+  const color = active ? '#3B82F6' : '#64748B';
   return <Pressable onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}><View style={styles.tabIconWrap}><SymbolView name={icon as any} size={18} tintColor={color} fallback={<ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{fallback}</ThemedText>} /></View><ThemedText type="small" style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText></Pressable>;
 }
 
 const styles = StyleSheet.create({
-  screen: { backgroundColor: '#F5FBFF', paddingHorizontal: Spacing.three, paddingTop: Spacing.three, paddingBottom: 0 },
+  screen: { backgroundColor: '#FFFFFF', paddingHorizontal: Spacing.three, paddingTop: Spacing.three, paddingBottom: 0 },
   content: { gap: Spacing.three, paddingBottom: 104 },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
-  brandIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF5FF', borderWidth: 1, borderColor: '#BBD8FF' },
-  brandIconText: { color: '#1685FF', fontSize: 12, fontWeight: '800' },
-  brandText: { color: '#0B1F44', fontSize: 17 },
+  brandIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF5FF', borderWidth: 1, borderColor: '#EAF5FF' },
+  brandIconText: { color: '#3B82F6', fontSize: 12, fontWeight: '800' },
+  brandText: { color: '#1E293B', fontSize: 17 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   iconButton: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
-  headerIcon: { color: '#0B1F44', fontSize: 20, fontWeight: '800' },
-  avatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: '#CFE6FF', overflow: 'hidden' },
+  headerIcon: { color: '#1E293B', fontSize: 20, fontWeight: '800' },
+  avatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF5FF', overflow: 'hidden' },
   avatarImage: { width: 42, height: 42 },
   heroRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.two },
   greetingBlock: { flex: 1, gap: Spacing.one },
-  greeting: { color: '#071B44', fontSize: 27, lineHeight: 32 },
+  greeting: { color: '#1E293B', fontSize: 27, lineHeight: 32 },
   streakCard: { width: 118, minHeight: 94, borderRadius: Radius.large, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', gap: Spacing.half, ...Shadow.soft },
   streakIconImage: { position: 'absolute', left: 14, top: 10, width: 28, height: 28 },
-  streakNumber: { color: '#1685FF', fontSize: 24, lineHeight: 28, textAlign: 'center' },
-  streakLabel: { color: '#0B1F44', fontSize: 12, textAlign: 'center' },
+  streakNumber: { color: '#3B82F6', fontSize: 24, lineHeight: 28, textAlign: 'center' },
+  streakLabel: { color: '#1E293B', fontSize: 12, textAlign: 'center' },
   streakSub: { color: '#22C55E', fontSize: 11, textAlign: 'center' },
   statsRow: { flexDirection: 'row', gap: Spacing.two },
   metricCard: { flex: 1, minHeight: 86, borderRadius: Radius.large, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', gap: Spacing.two, padding: Spacing.two, ...Shadow.soft },
   metricIcon: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   metricImage: { width: 38, height: 38 },
   metricCopy: { flex: 1 },
-  metricLabel: { color: '#071B44', fontSize: 11, lineHeight: 15 },
+  metricLabel: { color: '#1E293B', fontSize: 11, lineHeight: 15 },
   metricValue: { fontSize: 21, lineHeight: 25 },
   metricSub: { fontSize: 10, lineHeight: 14 },
   sectionCard: { borderRadius: Radius.large, backgroundColor: '#FFFFFF', padding: Spacing.three, gap: Spacing.three, ...Shadow.soft },
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.two },
-  sectionTitle: { color: '#071B44', fontSize: 14 },
-  linkText: { color: '#1685FF', fontSize: 12 },
+  sectionTitle: { color: '#1E293B', fontSize: 14 },
+  linkText: { color: '#3B82F6', fontSize: 12 },
   timelineTrack: { flexDirection: 'row', justifyContent: 'space-between', position: 'relative', paddingTop: Spacing.one },
-  timelineLine: { position: 'absolute', left: 38, right: 38, top: 24, height: 3, backgroundColor: '#DDEAF7' },
+  timelineLine: { position: 'absolute', left: 38, right: 38, top: 24, height: 3, backgroundColor: '#EAF5FF' },
   timelineItem: { width: '24%', alignItems: 'center', gap: Spacing.one },
-  timelineIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#F2F6FB', borderWidth: 2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  timelineIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#EAF5FF', borderWidth: 2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   timelineIconActive: { backgroundColor: '#EAF5FF' },
   activeDot: { position: 'absolute', width: 12, height: 12, borderRadius: 6, left: 4, top: 4, zIndex: 1 },
   timelineImage: { width: 34, height: 34 },
-  timelineTitle: { color: '#071B44', fontSize: 11, lineHeight: 15, textAlign: 'center' },
-  timelineDescription: { color: '#526487', fontSize: 9, lineHeight: 12, textAlign: 'center' },
+  timelineTitle: { color: '#1E293B', fontSize: 11, lineHeight: 15, textAlign: 'center' },
+  timelineDescription: { color: '#64748B', fontSize: 9, lineHeight: 12, textAlign: 'center' },
   achievementRow: { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.two },
   achievementTile: { flex: 1, alignItems: 'center', gap: Spacing.one },
   badgeShape: { width: 52, height: 52, borderRadius: 16, borderWidth: 3, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   badgeImage: { width: 42, height: 42 },
-  achievementTitle: { color: '#071B44', fontSize: 10, lineHeight: 13, textAlign: 'center' },
+  achievementTitle: { color: '#1E293B', fontSize: 10, lineHeight: 13, textAlign: 'center' },
   achievementDescription: { fontSize: 9, lineHeight: 12, textAlign: 'center' },
   achievementTileLocked: { opacity: 0.55 },
   badgeImageLocked: { opacity: 0.45 },
   dots: { flexDirection: 'row', justifyContent: 'center', gap: Spacing.one },
-  dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#D9E8F8' },
-  dotActive: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#1685FF' },
+  dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#EAF5FF' },
+  dotActive: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#3B82F6' },
   smallCardsRow: { flexDirection: 'row', gap: Spacing.two },
   infoCard: { flex: 1, minHeight: 108, borderRadius: Radius.large, backgroundColor: '#FFFFFF', padding: Spacing.two, gap: Spacing.one, overflow: 'hidden', ...Shadow.soft },
   infoTitle: { fontSize: 12 },
   infoBody: { fontSize: 10, lineHeight: 14, maxWidth: '72%' },
   infoImage: { position: 'absolute', right: 0, bottom: 0, width: 66, height: 66, opacity: 0.9 },
   infoAction: { position: 'absolute', right: 14, bottom: 28 },
-  journalCard: { minHeight: 72, borderRadius: Radius.large, backgroundColor: '#F5EFFF', flexDirection: 'row', alignItems: 'center', gap: Spacing.two, padding: Spacing.two, ...Shadow.soft },
+  journalCard: { minHeight: 72, borderRadius: Radius.large, backgroundColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', gap: Spacing.two, padding: Spacing.two, ...Shadow.soft },
   journalImage: { width: 42, height: 42 },
   journalCopy: { flex: 1 },
-  journalTitle: { color: '#7E22CE' },
+  journalTitle: { color: '#3B82F6' },
   checkInButton: { minHeight: 42, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: Spacing.three },
-  checkInText: { color: '#A855F7', fontSize: 12 },
+  checkInText: { color: '#3B82F6', fontSize: 12 },
   bottomTabs: { position: 'absolute', left: Spacing.three, right: Spacing.three, bottom: Spacing.one, minHeight: 70, borderRadius: Radius.large, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', ...Shadow.soft },
   tabItem: { width: 58, alignItems: 'center', justifyContent: 'center', gap: Spacing.half },
   tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
-  tabIcon: { color: '#94A3B8', fontSize: 16, fontWeight: '900' },
-  tabLabel: { color: '#94A3B8', fontSize: 10 },
-  tabActive: { color: '#1685FF' },
-  addButton: { width: 58, height: 58, borderRadius: 29, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1685FF', marginTop: -24 },
+  tabIcon: { color: '#64748B', fontSize: 16, fontWeight: '900' },
+  tabLabel: { color: '#64748B', fontSize: 10 },
+  tabActive: { color: '#3B82F6' },
+  addButton: { width: 58, height: 58, borderRadius: 29, alignItems: 'center', justifyContent: 'center', backgroundColor: '#3B82F6', marginTop: -24 },
   addText: { color: '#FFFFFF', fontSize: 34, lineHeight: 38 },
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   error: { color: '#DC2626', textAlign: 'center' },

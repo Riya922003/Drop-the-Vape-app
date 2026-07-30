@@ -1,4 +1,4 @@
-﻿import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#EAF5FF',
     borderWidth: 1,
-    borderColor: '#BBD8FF',
+    borderColor: '#EAF5FF',
   },
   logoIcon: {
     color: '#3B82F6',
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   logoText: {
-    color: '#0B1F44',
+    color: '#1E293B',
     fontSize: 18,
     lineHeight: 24,
   },
@@ -188,13 +188,13 @@ const styles = StyleSheet.create({
   progressSegment: {
     width: 72,
     height: 1,
-    backgroundColor: '#DDEAF7',
+    backgroundColor: '#EAF5FF',
   },
   progressDotActive: {
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: '#1685FF',
+    backgroundColor: '#3B82F6',
   },
   progressDot: {
     width: 14,
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#C8DDF4',
+    borderColor: '#EAF5FF',
   },
   copy: {
     gap: Spacing.two,
@@ -211,12 +211,12 @@ const styles = StyleSheet.create({
   title: {
     maxWidth: 320,
     textAlign: 'center',
-    color: '#0B1F44',
+    color: '#1E293B',
     fontSize: 30,
     lineHeight: 36,
   },
   titleAccent: {
-    color: '#1685FF',
+    color: '#3B82F6',
     fontSize: 30,
     lineHeight: 36,
   },
@@ -237,30 +237,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
     borderBottomWidth: 1,
-    borderBottomColor: '#DDEAF7',
+    borderBottomColor: '#EAF5FF',
   },
   optionTitle: {
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   radioOuter: {
     width: 18,
     height: 18,
     borderRadius: 9,
     borderWidth: 1,
-    borderColor: '#C8DDF4',
+    borderColor: '#EAF5FF',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
   },
   radioOuterSelected: {
-    borderColor: '#1685FF',
+    borderColor: '#3B82F6',
     borderWidth: 2,
   },
   radioInner: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#1685FF',
+    backgroundColor: '#3B82F6',
   },
   customRow: {
     minHeight: 52,
@@ -273,16 +273,16 @@ const styles = StyleSheet.create({
   },
   customLabel: {
     flex: 1,
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   customInput: {
     width: 104,
     height: 38,
     borderWidth: 1,
-    borderColor: '#DDEAF7',
+    borderColor: '#EAF5FF',
     borderRadius: Radius.small,
     backgroundColor: '#FFFFFF',
-    color: '#0B1F44',
+    color: '#1E293B',
     paddingHorizontal: Spacing.three,
     fontSize: 15,
     fontWeight: '700',
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#22C55E',
   },
   previewTitle: {
-    color: '#1685FF',
+    color: '#3B82F6',
   },
   previewSubtitle: {
     fontSize: 11,
@@ -320,23 +320,23 @@ const styles = StyleSheet.create({
   previewDivider: {
     width: 1,
     height: 52,
-    backgroundColor: '#DDEAF7',
+    backgroundColor: '#EAF5FF',
   },
   previewGreen: {
     color: '#22C55E',
   },
   previewBlue: {
-    color: '#1685FF',
+    color: '#3B82F6',
   },
   previewLabel: {
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   primaryButton: {
     minHeight: 56,
     borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1685FF',
+    backgroundColor: '#3B82F6',
     ...Shadow.soft,
   },
   primaryButtonText: {

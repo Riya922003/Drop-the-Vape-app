@@ -1,4 +1,4 @@
-﻿import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#EAF5FF',
     borderWidth: 1,
-    borderColor: '#BBD8FF',
+    borderColor: '#EAF5FF',
   },
   logoIcon: {
     color: '#3B82F6',
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   logoText: {
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   stepCard: {
     minHeight: 58,
@@ -88,14 +88,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
     borderWidth: 3,
-    borderColor: '#D8EAFF',
+    borderColor: '#EAF5FF',
   },
   stepBadgeText: {
     color: '#3B82F6',
   },
   stepLabel: {
     flex: 1,
-    color: '#0B1F44',
+    color: '#1E293B',
   },
   dots: {
     flexDirection: 'row',
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#DDEAF7',
+    backgroundColor: '#EAF5FF',
   },
   dotActive: {
     backgroundColor: '#3B82F6',

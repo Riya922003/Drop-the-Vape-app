@@ -1,4 +1,4 @@
-﻿import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -18,15 +18,15 @@ type QuitGoalStepProps = {
 function getGoalIcon(value: string) {
   switch (value) {
     case 'quit_good':
-      return { label: 'G', backgroundColor: '#E7F1FF', color: '#1685FF' };
+      return { label: 'G', backgroundColor: '#EAF5FF', color: '#3B82F6' };
     case 'cut_down':
-      return { label: 'D', backgroundColor: '#EAFBEF', color: '#22C55E' };
+      return { label: 'D', backgroundColor: '#EAF5FF', color: '#22C55E' };
     case 'specific_date':
-      return { label: 'S', backgroundColor: '#FFF0DE', color: '#F97316' };
+      return { label: 'S', backgroundColor: '#EAF5FF', color: '#22C55E' };
     case 'health':
-      return { label: 'H', backgroundColor: '#F0E8FF', color: '#7C3AED' };
+      return { label: 'H', backgroundColor: '#EAF5FF', color: '#3B82F6' };
     default:
-      return { label: '?', backgroundColor: '#E7F5FF', color: '#1685FF' };
+      return { label: '?', backgroundColor: '#EAF5FF', color: '#3B82F6' };
   }
 }
 
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   title: {
     maxWidth: 340,
     textAlign: 'center',
-    color: '#0B1F44',
+    color: '#1E293B',
     fontSize: 31,
     lineHeight: 36,
   },
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     borderWidth: 1,
     borderRadius: Radius.medium,
-    borderColor: '#DDEAF7',
+    borderColor: '#EAF5FF',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   },
   cardSelected: {
     borderColor: '#3B82F6',
-    backgroundColor: '#F8FBFF',
+    backgroundColor: '#FFFFFF',
   },
   icon: {
     width: 54,
@@ -134,12 +134,12 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   optionTitle: {
-    color: '#0B1F44',
+    color: '#1E293B',
     fontSize: 18,
     lineHeight: 22,
   },
   optionDescription: {
-    color: '#3E6EA8',
+    color: '#64748B',
     lineHeight: 18,
   },
   radioOuter: {
@@ -147,19 +147,19 @@ const styles = StyleSheet.create({
     height: 26,
     borderRadius: 13,
     borderWidth: 1,
-    borderColor: '#C8DDF4',
+    borderColor: '#EAF5FF',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
   },
   radioOuterSelected: {
-    borderColor: '#1685FF',
+    borderColor: '#3B82F6',
     borderWidth: 2,
   },
   radioInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#1685FF',
+    backgroundColor: '#3B82F6',
   },
 });

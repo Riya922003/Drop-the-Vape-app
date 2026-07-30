@@ -143,17 +143,17 @@ function ProfileContent({
         <Section title="Journey Summary" action="View Details" onAction={onOpenProgress}>
           <View style={styles.summaryGrid}>
             <SummaryMetric icon="$" label="Money Saved" value={formatMoney(progress.moneySaved)} color="#22C55E" />
-            <SummaryMetric icon="P" label="Puffs Avoided" value={formatNumber(progress.vapesAvoided)} color="#8B5CF6" />
+            <SummaryMetric icon="P" label="Puffs Avoided" value={formatNumber(progress.vapesAvoided)} color="#3B82F6" />
             <SummaryMetric icon="O" label="Time Vape-Free" value={`${progress.daysVapeFree} Days`} color="#3B82F6" />
-            <SummaryMetric icon="G" label="Current Goal" value={quitGoalLabel(quitProfile.quitGoal)} color="#F97316" />
+            <SummaryMetric icon="G" label="Current Goal" value={quitGoalLabel(quitProfile.quitGoal)} color="#22C55E" />
           </View>
         </Section>
 
         <Section title="My Plan">
           <View style={styles.rowsCard}>
             <InfoRow icon="G" label="Quit Goal" value={quitGoalLabel(quitProfile.quitGoal)} color="#3B82F6" />
-            <InfoRow icon="D" label="Quit Date" value={formatDate(quitProfile.quitStartDate)} color="#8B5CF6" />
-            <InfoRow icon="R" label="Daily Reminder" value="8:00 PM" color="#F59E0B" />
+            <InfoRow icon="D" label="Quit Date" value={formatDate(quitProfile.quitStartDate)} color="#3B82F6" />
+            <InfoRow icon="R" label="Daily Reminder" value="8:00 PM" color="#22C55E" />
             <InfoRow icon="M" label="Motivation Style" value="Encouraging" color="#22C55E" />
           </View>
         </Section>
@@ -250,13 +250,13 @@ function InfoRow({ icon, label, value, color }: { icon: string; label: string; v
 }
 
 function AchievementTile({ item, index }: { item: ProgressMilestone; index: number }) {
-  const colors = ['#F59E0B', '#FBBF24', '#EF4444', '#94A3B8'];
-  const color = item.unlocked ? colors[index % colors.length] : '#94A3B8';
+  const colors = ['#22C55E', '#22C55E', '#DC2626', '#64748B'];
+  const color = item.unlocked ? colors[index % colors.length] : '#64748B';
   const icon = achievementIconByKey[item.key] ?? achievementIcons[index % achievementIcons.length];
 
   return (
     <View style={styles.achievementTile}>
-      <View style={[styles.achievementIconWrap, { backgroundColor: item.unlocked ? `${color}24` : '#EEF2F7' }]}>
+      <View style={[styles.achievementIconWrap, { backgroundColor: item.unlocked ? `${color}24` : '#EAF5FF' }]}>
         <Image source={icon} style={[styles.achievementImage, !item.unlocked && styles.lockedImage]} contentFit="contain" />
       </View>
       <ThemedText type="smallBold" style={styles.achievementLabel} numberOfLines={2}>{item.label}</ThemedText>
@@ -280,7 +280,7 @@ function MenuGroup({ title, items }: { title: string; items: MenuItem[] }) {
       {items.map((item) => (
         <Pressable key={item.label} onPress={item.onPress} style={({ pressed }) => [styles.menuItem, item.danger && styles.dangerItem, pressed && styles.pressed]}>
           <View style={styles.menuIconWrap}>
-            <SymbolView name={item.icon as any} size={15} tintColor={item.danger ? '#EF4444' : '#64748B'} fallback={<ThemedText style={[styles.menuIconFallback, item.danger && styles.dangerText]}>{item.fallback}</ThemedText>} />
+            <SymbolView name={item.icon as any} size={15} tintColor={item.danger ? '#DC2626' : '#64748B'} fallback={<ThemedText style={[styles.menuIconFallback, item.danger && styles.dangerText]}>{item.fallback}</ThemedText>} />
           </View>
           <ThemedText type="small" style={[styles.menuLabel, item.danger && styles.dangerText]} numberOfLines={1}>{item.label}</ThemedText>
           {!item.danger ? <ThemedText style={styles.menuChevron}>&gt;</ThemedText> : null}
@@ -378,48 +378,48 @@ export function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { backgroundColor: '#F8FBFF', paddingHorizontal: Spacing.three, paddingTop: Spacing.three, paddingBottom: 0 },
+  screen: { backgroundColor: '#FFFFFF', paddingHorizontal: Spacing.three, paddingTop: Spacing.three, paddingBottom: 0 },
   content: { gap: Spacing.three, paddingBottom: 96 },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  title: { color: '#0B1F44', fontSize: 28, lineHeight: 34 },
+  title: { color: '#1E293B', fontSize: 28, lineHeight: 34 },
   settingsButton: { minHeight: 36, flexDirection: 'row', alignItems: 'center', gap: Spacing.one, paddingHorizontal: Spacing.two },
-  settingsIcon: { color: '#587399', fontSize: 20, lineHeight: 22, fontWeight: '900' },
-  settingsText: { color: '#587399', fontSize: 12 },
-  heroCard: { minHeight: 158, borderRadius: Radius.large, backgroundColor: '#93C9FF', padding: Spacing.three, gap: Spacing.three, overflow: 'hidden', ...Shadow.soft },
+  settingsIcon: { color: '#64748B', fontSize: 20, lineHeight: 22, fontWeight: '900' },
+  settingsText: { color: '#64748B', fontSize: 12 },
+  heroCard: { minHeight: 158, borderRadius: Radius.large, backgroundColor: '#EAF5FF', padding: Spacing.three, gap: Spacing.three, overflow: 'hidden', ...Shadow.soft },
   cloudLarge: { position: 'absolute', right: 40, top: 52, width: 74, height: 28, borderRadius: 16, backgroundColor: '#FFFFFF', opacity: 0.75 },
   cloudSmall: { position: 'absolute', right: 18, top: 84, width: 54, height: 20, borderRadius: 12, backgroundColor: '#FFFFFF', opacity: 0.42 },
-  vapeOutline: { position: 'absolute', right: 24, top: 30, width: 18, height: 80, borderWidth: 4, borderColor: '#5EA8FF', borderRadius: 7, transform: [{ rotate: '26deg' }], opacity: 0.72 },
+  vapeOutline: { position: 'absolute', right: 24, top: 30, width: 18, height: 80, borderWidth: 4, borderColor: '#3B82F6', borderRadius: 7, transform: [{ rotate: '26deg' }], opacity: 0.72 },
   heroHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.three },
   avatarWrap: { width: 78, height: 78, borderRadius: 39, backgroundColor: '#EAF5FF', borderWidth: 4, borderColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' },
   avatarImage: { width: 70, height: 70, borderRadius: 35 },
   cameraBadge: { position: 'absolute', right: -2, bottom: 3, width: 22, height: 22, borderRadius: 11, backgroundColor: '#3B82F6', borderWidth: 2, borderColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' },
   cameraIcon: { color: '#FFFFFF', fontSize: 11, lineHeight: 13, fontWeight: '900' },
   heroCopy: { flex: 1 },
-  greeting: { color: '#0B1F44', fontSize: 22, lineHeight: 28 },
-  memberText: { color: '#476181', fontSize: 12 },
+  greeting: { color: '#1E293B', fontSize: 22, lineHeight: 28 },
+  memberText: { color: '#64748B', fontSize: 12 },
   heroStats: { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.two },
   heroStat: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   heroStatIcon: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
-  heroStatGlyph: { color: '#F97316', fontSize: 15, lineHeight: 18, fontWeight: '900' },
-  heroStatValue: { color: '#0B1F44', fontSize: 18, lineHeight: 22 },
-  heroStatLabel: { color: '#476181', fontSize: 10, lineHeight: 12 },
+  heroStatGlyph: { color: '#22C55E', fontSize: 15, lineHeight: 18, fontWeight: '900' },
+  heroStatValue: { color: '#1E293B', fontSize: 18, lineHeight: 22 },
+  heroStatLabel: { color: '#64748B', fontSize: 10, lineHeight: 12 },
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   errorText: { color: '#DC2626', textAlign: 'center' },
   section: { borderRadius: Radius.large, backgroundColor: '#FFFFFF', padding: Spacing.three, gap: Spacing.three, ...Shadow.soft },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.two },
-  sectionTitle: { color: '#0B1F44', fontSize: 13 },
+  sectionTitle: { color: '#1E293B', fontSize: 13 },
   linkText: { color: '#3B82F6', fontSize: 11 },
   summaryGrid: { flexDirection: 'row' },
-  summaryMetric: { flex: 1, alignItems: 'center', gap: Spacing.one, minHeight: 86, borderRightWidth: 1, borderColor: '#DDEAF7', paddingHorizontal: Spacing.one },
+  summaryMetric: { flex: 1, alignItems: 'center', gap: Spacing.one, minHeight: 86, borderRightWidth: 1, borderColor: '#EAF5FF', paddingHorizontal: Spacing.one },
   summaryIcon: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
   summaryIconText: { fontSize: 17, fontWeight: '800' },
-  summaryLabel: { color: '#476181', fontSize: 9, lineHeight: 12, textAlign: 'center' },
+  summaryLabel: { color: '#64748B', fontSize: 9, lineHeight: 12, textAlign: 'center' },
   summaryValue: { fontSize: 13, lineHeight: 16, textAlign: 'center' },
-  rowsCard: { borderWidth: 1, borderColor: '#DDEAF7', borderRadius: Radius.medium, overflow: 'hidden' },
-  infoRow: { minHeight: 45, flexDirection: 'row', alignItems: 'center', gap: Spacing.two, paddingHorizontal: Spacing.two, borderBottomWidth: 1, borderBottomColor: '#DDEAF7' },
+  rowsCard: { borderWidth: 1, borderColor: '#EAF5FF', borderRadius: Radius.medium, overflow: 'hidden' },
+  infoRow: { minHeight: 45, flexDirection: 'row', alignItems: 'center', gap: Spacing.two, paddingHorizontal: Spacing.two, borderBottomWidth: 1, borderBottomColor: '#EAF5FF' },
   rowIcon: { width: 28, height: 28, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   rowIconText: { fontSize: 14, fontWeight: '900' },
-  rowLabel: { flex: 1, color: '#0B1F44', fontSize: 11 },
+  rowLabel: { flex: 1, color: '#1E293B', fontSize: 11 },
   rowValue: { maxWidth: 132, color: '#64748B', fontSize: 11, textAlign: 'right' },
   chevron: { color: '#64748B', fontSize: 14, lineHeight: 18, fontWeight: '900' },
   achievementRow: { flexDirection: 'row', gap: Spacing.two },
@@ -427,18 +427,18 @@ const styles = StyleSheet.create({
   achievementIconWrap: { width: 55, height: 55, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   achievementImage: { width: 48, height: 48 },
   lockedImage: { opacity: 0.45 },
-  achievementLabel: { color: '#0B1F44', fontSize: 10, lineHeight: 12, textAlign: 'center' },
+  achievementLabel: { color: '#1E293B', fontSize: 10, lineHeight: 12, textAlign: 'center' },
   achievementState: { color: '#64748B', fontSize: 9, lineHeight: 11 },
   groupGrid: { flexDirection: 'row', gap: Spacing.two },
   menuGroup: { flex: 1, borderRadius: Radius.medium, backgroundColor: '#FFFFFF', padding: Spacing.two, gap: Spacing.one, ...Shadow.soft },
-  menuTitle: { color: '#0B1F44', fontSize: 11, marginBottom: Spacing.one },
+  menuTitle: { color: '#1E293B', fontSize: 11, marginBottom: Spacing.one },
   menuItem: { minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: Spacing.one, borderRadius: Radius.small, paddingHorizontal: Spacing.one },
   menuIconWrap: { width: 16, height: 18, alignItems: 'center', justifyContent: 'center' },
   menuIconFallback: { color: '#64748B', fontSize: 13, textAlign: 'center', fontWeight: '800' },
-  menuLabel: { flex: 1, color: '#334155', fontSize: 10 },
-  menuChevron: { color: '#94A3B8', fontSize: 12, fontWeight: '900' },
+  menuLabel: { flex: 1, color: '#1E293B', fontSize: 10 },
+  menuChevron: { color: '#64748B', fontSize: 12, fontWeight: '900' },
   dangerItem: { backgroundColor: '#FEF2F2' },
-  dangerText: { color: '#EF4444' },
+  dangerText: { color: '#DC2626' },
   bottomTabs: { position: 'absolute', left: Spacing.three, right: Spacing.three, bottom: Spacing.one, minHeight: 70, borderTopWidth: 2, borderTopColor: '#3B82F6', backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', ...Shadow.soft },
   tabItem: { width: 76, alignItems: 'center', justifyContent: 'center', gap: Spacing.half },
   tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },

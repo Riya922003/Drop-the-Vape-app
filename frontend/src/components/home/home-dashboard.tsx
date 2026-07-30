@@ -1,4 +1,5 @@
-﻿import { Image } from 'expo-image';
+import { Image } from 'expo-image';
+import { SymbolView } from 'expo-symbols';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -155,11 +156,11 @@ export function HomeDashboard({ progress, error, isRefreshing, onRefresh, onRetr
       </ScrollView>
 
       <View style={styles.bottomTabs}>
-        <TabItem label="Home" icon="H" active onPress={onOpenHome} />
-        <TabItem label="Progress" icon="P" onPress={onOpenProgress} />
+        <TabItem label="Home" icon="house" fallback="H" active onPress={onOpenHome} />
+        <TabItem label="Progress" icon="chart.bar" fallback="P" onPress={onOpenProgress} />
         <Pressable onPress={onOpenProgress} style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}><ThemedText style={styles.addText}>+</ThemedText></Pressable>
-        <TabItem label="Support" icon="S" onPress={onOpenSupport} />
-        <TabItem label="Profile" icon="M" onPress={onOpenProfile} />
+        <TabItem label="Support" icon="questionmark.circle" fallback="S" onPress={onOpenSupport} />
+        <TabItem label="Profile" icon="person" fallback="M" onPress={onOpenProfile} />
       </View>
     </Screen>
   );
@@ -188,8 +189,9 @@ function InfoCard({ title, body, accent, image, action, onPress }: { title: stri
   return <Pressable onPress={onPress} style={({ pressed }) => [styles.infoCard, pressed && styles.pressed]}><ThemedText type="smallBold" style={[styles.infoTitle, { color: accent }]}>{title}</ThemedText><ThemedText type="small" themeColor="textSecondary" style={styles.infoBody}>{body}</ThemedText><Image source={image} style={styles.infoImage} contentFit="contain" />{action ? <ThemedText type="headline" style={[styles.infoAction, { color: accent }]}>{action}</ThemedText> : null}</Pressable>;
 }
 
-function TabItem({ icon, label, active, onPress }: { icon: string; label: string; active?: boolean; onPress?: () => void }) {
-  return <Pressable onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}><ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{icon}</ThemedText><ThemedText type="small" style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText></Pressable>;
+function TabItem({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
+  const color = active ? '#1685FF' : '#94A3B8';
+  return <Pressable onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}><View style={styles.tabIconWrap}><SymbolView name={icon as any} size={18} tintColor={color} fallback={<ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{fallback}</ThemedText>} /></View><ThemedText type="small" style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText></Pressable>;
 }
 
 const styles = StyleSheet.create({
@@ -259,6 +261,7 @@ const styles = StyleSheet.create({
   checkInText: { color: '#A855F7', fontSize: 12 },
   bottomTabs: { position: 'absolute', left: Spacing.three, right: Spacing.three, bottom: Spacing.one, minHeight: 70, borderRadius: Radius.large, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', ...Shadow.soft },
   tabItem: { width: 58, alignItems: 'center', justifyContent: 'center', gap: Spacing.half },
+  tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
   tabIcon: { color: '#94A3B8', fontSize: 16, fontWeight: '900' },
   tabLabel: { color: '#94A3B8', fontSize: 10 },
   tabActive: { color: '#1685FF' },

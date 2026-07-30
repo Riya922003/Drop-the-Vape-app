@@ -1,4 +1,5 @@
-﻿import { Image } from 'expo-image';
+import { Image } from 'expo-image';
+import { SymbolView } from 'expo-symbols';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
@@ -167,33 +168,33 @@ function ProfileContent({
 
         <View style={styles.groupGrid}>
           <MenuGroup title="Preferences" items={[
-            { icon: 'N', label: 'Notifications' },
-            { icon: 'A', label: 'Appearance' },
-            { icon: 'L', label: 'Language' },
-            { icon: 'U', label: 'Units & Statistics' },
+            { icon: 'bell', fallback: 'B', label: 'Notifications' },
+            { icon: 'moon', fallback: 'M', label: 'Appearance' },
+            { icon: 'globe', fallback: 'G', label: 'Language' },
+            { icon: 'chart.bar', fallback: 'C', label: 'Units & Statistics' },
           ]} />
           <MenuGroup title="Support" items={[
-            { icon: '?', label: 'Help Center' },
-            { icon: 'C', label: 'Contact Support' },
-            { icon: '*', label: 'Rate the App' },
-            { icon: 'S', label: 'Share with Friends' },
+            { icon: 'questionmark.circle', fallback: '?', label: 'Help Center' },
+            { icon: 'message', fallback: 'C', label: 'Contact Support' },
+            { icon: 'star', fallback: '*', label: 'Rate the App' },
+            { icon: 'square.and.arrow.up', fallback: '^', label: 'Share with Friends' },
           ]} />
           <MenuGroup title="Account" items={[
-            { icon: 'E', label: 'Edit Profile' },
-            { icon: 'P', label: 'Change Password' },
-            { icon: 'V', label: 'Privacy Policy' },
-            { icon: 'T', label: 'Terms of Service' },
-            { icon: 'X', label: 'Delete Account' },
-            { icon: 'L', label: 'Log Out', danger: true, onPress: onLogout },
+            { icon: 'person', fallback: 'P', label: 'Edit Profile' },
+            { icon: 'lock', fallback: 'L', label: 'Change Password' },
+            { icon: 'shield', fallback: 'S', label: 'Privacy Policy' },
+            { icon: 'doc.text', fallback: 'D', label: 'Terms of Service' },
+            { icon: 'trash', fallback: 'X', label: 'Delete Account' },
+            { icon: 'rectangle.portrait.and.arrow.right', fallback: '>', label: 'Log Out', danger: true, onPress: onLogout },
           ]} />
         </View>
       </ScrollView>
 
       <View style={styles.bottomTabs}>
-        <TabItem label="Home" icon="H" onPress={onOpenHome} />
-        <TabItem label="Progress" icon="P" onPress={onOpenProgress} />
-        <TabItem label="Achievements" icon="A" onPress={onOpenAchievements} />
-        <TabItem label="Profile" icon="M" active onPress={onOpenProfile} />
+        <TabItem label="Home" icon="house" fallback="H" onPress={onOpenHome} />
+        <TabItem label="Progress" icon="chart.bar" fallback="P" onPress={onOpenProgress} />
+        <TabItem label="Achievements" icon="trophy" fallback="A" onPress={onOpenAchievements} />
+        <TabItem label="Profile" icon="person" fallback="M" active onPress={onOpenProfile} />
       </View>
     </Screen>
   );
@@ -266,6 +267,7 @@ function AchievementTile({ item, index }: { item: ProgressMilestone; index: numb
 
 type MenuItem = {
   icon: string;
+  fallback: string;
   label: string;
   danger?: boolean;
   onPress?: () => void;
@@ -277,7 +279,9 @@ function MenuGroup({ title, items }: { title: string; items: MenuItem[] }) {
       <ThemedText type="smallBold" style={styles.menuTitle}>{title}</ThemedText>
       {items.map((item) => (
         <Pressable key={item.label} onPress={item.onPress} style={({ pressed }) => [styles.menuItem, item.danger && styles.dangerItem, pressed && styles.pressed]}>
-          <ThemedText style={[styles.menuIcon, item.danger && styles.dangerText]}>{item.icon}</ThemedText>
+          <View style={styles.menuIconWrap}>
+            <SymbolView name={item.icon as any} size={15} tintColor={item.danger ? '#EF4444' : '#64748B'} fallback={<ThemedText style={[styles.menuIconFallback, item.danger && styles.dangerText]}>{item.fallback}</ThemedText>} />
+          </View>
           <ThemedText type="small" style={[styles.menuLabel, item.danger && styles.dangerText]} numberOfLines={1}>{item.label}</ThemedText>
           {!item.danger ? <ThemedText style={styles.menuChevron}>&gt;</ThemedText> : null}
         </Pressable>
@@ -286,15 +290,15 @@ function MenuGroup({ title, items }: { title: string; items: MenuItem[] }) {
   );
 }
 
-function TabItem({ icon, label, active, onPress }: { icon: string; label: string; active?: boolean; onPress?: () => void }) {
+function TabItem({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
+  const color = active ? '#3B82F6' : '#64748B';
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}>
-      <ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{icon}</ThemedText>
+      <View style={styles.tabIconWrap}><SymbolView name={icon as any} size={18} tintColor={color} fallback={<ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{fallback}</ThemedText>} /></View>
       <ThemedText type="small" style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText>
     </Pressable>
   );
 }
-
 export function ProfileScreen() {
   const router = useRouter();
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -429,13 +433,15 @@ const styles = StyleSheet.create({
   menuGroup: { flex: 1, borderRadius: Radius.medium, backgroundColor: '#FFFFFF', padding: Spacing.two, gap: Spacing.one, ...Shadow.soft },
   menuTitle: { color: '#0B1F44', fontSize: 11, marginBottom: Spacing.one },
   menuItem: { minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: Spacing.one, borderRadius: Radius.small, paddingHorizontal: Spacing.one },
-  menuIcon: { width: 16, color: '#64748B', fontSize: 13, textAlign: 'center', fontWeight: '800' },
+  menuIconWrap: { width: 16, height: 18, alignItems: 'center', justifyContent: 'center' },
+  menuIconFallback: { color: '#64748B', fontSize: 13, textAlign: 'center', fontWeight: '800' },
   menuLabel: { flex: 1, color: '#334155', fontSize: 10 },
   menuChevron: { color: '#94A3B8', fontSize: 12, fontWeight: '900' },
   dangerItem: { backgroundColor: '#FEF2F2' },
   dangerText: { color: '#EF4444' },
   bottomTabs: { position: 'absolute', left: Spacing.three, right: Spacing.three, bottom: Spacing.one, minHeight: 70, borderTopWidth: 2, borderTopColor: '#3B82F6', backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', ...Shadow.soft },
   tabItem: { width: 76, alignItems: 'center', justifyContent: 'center', gap: Spacing.half },
+  tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
   tabIcon: { color: '#64748B', fontSize: 17, fontWeight: '900' },
   tabLabel: { color: '#64748B', fontSize: 10 },
   tabActive: { color: '#3B82F6' },

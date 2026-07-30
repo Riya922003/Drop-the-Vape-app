@@ -1,4 +1,5 @@
-﻿import { Image } from 'expo-image';
+import { Image } from 'expo-image';
+import { SymbolView } from 'expo-symbols';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -192,10 +193,10 @@ export function ProgressDashboard({ progress, error, isRefreshing, onRefresh, on
       </ScrollView>
 
       <View style={styles.bottomTabs}>
-        <TabButton label="Home" icon="H" active={activeTab === 'home'} onPress={onOpenHome} />
-        <TabButton label="Progress" icon="P" active={activeTab === 'progress'} onPress={onOpenProgress} />
-        <TabButton label="Achievements" icon="A" onPress={onOpenAchievements} />
-        <TabButton label="Profile" icon="M" onPress={onOpenProfile} />
+        <TabButton label="Home" icon="house" fallback="H" active={activeTab === 'home'} onPress={onOpenHome} />
+        <TabButton label="Progress" icon="chart.bar" fallback="P" active={activeTab === 'progress'} onPress={onOpenProgress} />
+        <TabButton label="Achievements" icon="trophy" fallback="A" onPress={onOpenAchievements} />
+        <TabButton label="Profile" icon="person" fallback="M" onPress={onOpenProfile} />
       </View>
     </Screen>
   );
@@ -247,8 +248,9 @@ function Legend({ color, label }: { color: string; label: string }) {
   return <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: color }]} /><ThemedText style={styles.legendText}>{label}</ThemedText></View>;
 }
 
-function TabButton({ icon, label, active, onPress }: { icon: string; label: string; active?: boolean; onPress?: () => void }) {
-  return <Pressable onPress={onPress} style={styles.tabButton}><ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{icon}</ThemedText><ThemedText style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText></Pressable>;
+function TabButton({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
+  const color = active ? '#1685FF' : '#8B98AF';
+  return <Pressable onPress={onPress} style={styles.tabButton}><View style={styles.tabIconWrap}><SymbolView name={icon as any} size={19} tintColor={color} fallback={<ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{fallback}</ThemedText>} /></View><ThemedText style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText></Pressable>;
 }
 
 const styles = StyleSheet.create({
@@ -329,6 +331,7 @@ const styles = StyleSheet.create({
   heart: { color: '#1685FF', fontSize: 38 },
   bottomTabs: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: 72, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#DCEBFA', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
   tabButton: { alignItems: 'center', justifyContent: 'center', gap: Spacing.one, minWidth: 70 },
+  tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
   tabIcon: { color: '#8B98AF', fontSize: 20 },
   tabLabel: { color: '#8B98AF', fontSize: 10 },
   tabActive: { color: '#1685FF', fontWeight: '800' },

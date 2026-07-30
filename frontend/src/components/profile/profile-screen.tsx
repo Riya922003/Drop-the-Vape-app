@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
+import { BottomTabs } from '@/components/navigation/bottom-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Screen } from '@/components/ui/app-foundation';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -83,6 +84,7 @@ type ProfileContentProps = {
   onRetry: () => void;
   onOpenHome: () => void;
   onOpenProgress: () => void;
+  onOpenPremium: () => void;
   onOpenAchievements: () => void;
   onOpenProfile: () => void;
   onOpenSettings: () => void;
@@ -98,6 +100,7 @@ function ProfileContent({
   onRetry,
   onOpenHome,
   onOpenProgress,
+  onOpenPremium,
   onOpenAchievements,
   onOpenProfile,
   onOpenSettings,
@@ -191,13 +194,7 @@ function ProfileContent({
           ]} />
         </View>
       </ScrollView>
-
-      <View style={styles.bottomTabs}>
-        <TabItem label="Home" icon="house" fallback="H" onPress={onOpenHome} />
-        <TabItem label="Progress" icon="chart.bar" fallback="P" onPress={onOpenProgress} />
-        <TabItem label="Achievements" icon="trophy" fallback="A" onPress={onOpenAchievements} />
-        <TabItem label="Profile" icon="person" fallback="M" active onPress={onOpenProfile} />
-      </View>
+      <BottomTabs active="profile" variant="floating" onOpenHome={onOpenHome} onOpenProgress={onOpenProgress} onOpenPremium={onOpenPremium} onOpenAchievements={onOpenAchievements} onOpenRightTab={onOpenProfile} />
     </Screen>
   );
 }
@@ -292,15 +289,6 @@ function MenuGroup({ title, items }: { title: string; items: MenuItem[] }) {
   );
 }
 
-function TabItem({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
-  const color = active ? '#3B82F6' : '#64748B';
-  return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}>
-      <View style={styles.tabIconWrap}><SymbolView name={icon as any} size={18} tintColor={color} fallback={<ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{fallback}</ThemedText>} /></View>
-      <ThemedText type="small" style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText>
-    </Pressable>
-  );
-}
 export function ProfileScreen() {
   const router = useRouter();
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -372,6 +360,7 @@ export function ProfileScreen() {
       onRetry={() => loadProfile()}
       onOpenHome={() => router.push('/home')}
       onOpenProgress={() => router.push('/progress')}
+      onOpenPremium={() => router.push('/premium')}
       onOpenAchievements={() => router.push('/achievements')}
       onOpenProfile={() => router.push('/profile')}
       onOpenSettings={() => router.push('/settings')}
@@ -442,11 +431,5 @@ const styles = StyleSheet.create({
   menuChevron: { color: '#64748B', fontSize: 12, fontWeight: '900' },
   dangerItem: { backgroundColor: '#FEF2F2' },
   dangerText: { color: '#DC2626' },
-  bottomTabs: { position: 'absolute', left: Spacing.three, right: Spacing.three, bottom: Spacing.one, minHeight: 70, borderTopWidth: 2, borderTopColor: '#3B82F6', backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', ...Shadow.soft },
-  tabItem: { width: 76, alignItems: 'center', justifyContent: 'center', gap: Spacing.half },
-  tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
-  tabIcon: { color: '#64748B', fontSize: 17, fontWeight: '900' },
-  tabLabel: { color: '#64748B', fontSize: 10 },
-  tabActive: { color: '#3B82F6' },
   pressed: { opacity: 0.75 },
 });

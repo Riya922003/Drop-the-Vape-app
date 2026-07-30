@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
+import { BottomTabs } from '@/components/navigation/bottom-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Screen } from '@/components/ui/app-foundation';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -65,6 +65,7 @@ type HomeDashboardProps = {
   onOpenProfile: () => void;
   onOpenHome: () => void;
   onOpenProgress: () => void;
+  onOpenPremium: () => void;
   onOpenSupport?: () => void;
 };
 
@@ -82,7 +83,7 @@ function dashboardAchievements(progress: UserProgress) {
   return preferredKeys.map((key) => milestones.find((item) => item.key === key)).filter(Boolean) as ProgressMilestone[];
 }
 
-export function HomeDashboard({ progress, error, isRefreshing, onRefresh, onRetry, onOpenAchievements, onOpenProfile, onOpenHome, onOpenProgress, onOpenSupport }: HomeDashboardProps) {
+export function HomeDashboard({ progress, error, isRefreshing, onRefresh, onRetry, onOpenAchievements, onOpenProfile, onOpenHome, onOpenProgress, onOpenPremium, onOpenSupport }: HomeDashboardProps) {
   const achievements = dashboardAchievements(progress);
   const timeline = healthTimelineRules.map((item) => ({ ...item, active: progress.daysVapeFree >= item.thresholdDays }));
 
@@ -154,14 +155,7 @@ export function HomeDashboard({ progress, error, isRefreshing, onRefresh, onRetr
           <View style={styles.checkInButton}><ThemedText type="smallBold" style={styles.checkInText}>Check In -&gt;</ThemedText></View>
         </Pressable>
       </ScrollView>
-
-      <View style={styles.bottomTabs}>
-        <TabItem label="Home" icon="house" fallback="H" active onPress={onOpenHome} />
-        <TabItem label="Progress" icon="chart.bar" fallback="P" onPress={onOpenProgress} />
-        <Pressable onPress={onOpenProgress} style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}><ThemedText style={styles.addText}>+</ThemedText></Pressable>
-        <TabItem label="Support" icon="questionmark.circle" fallback="S" onPress={onOpenSupport} />
-        <TabItem label="Profile" icon="person" fallback="M" onPress={onOpenProfile} />
-      </View>
+      <BottomTabs active="home" variant="floating" onOpenHome={onOpenHome} onOpenProgress={onOpenProgress} onOpenPremium={onOpenPremium} onOpenAchievements={onOpenAchievements} onOpenRightTab={onOpenProfile} />
     </Screen>
   );
 }
@@ -187,11 +181,6 @@ function AchievementTile({ item, index }: { item: ProgressMilestone; index: numb
 
 function InfoCard({ title, body, accent, image, action, onPress }: { title: string; body: string; accent: string; image: number; action?: string; onPress?: () => void }) {
   return <Pressable onPress={onPress} style={({ pressed }) => [styles.infoCard, pressed && styles.pressed]}><ThemedText type="smallBold" style={[styles.infoTitle, { color: accent }]}>{title}</ThemedText><ThemedText type="small" themeColor="textSecondary" style={styles.infoBody}>{body}</ThemedText><Image source={image} style={styles.infoImage} contentFit="contain" />{action ? <ThemedText type="headline" style={[styles.infoAction, { color: accent }]}>{action}</ThemedText> : null}</Pressable>;
-}
-
-function TabItem({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
-  const color = active ? '#3B82F6' : '#64748B';
-  return <Pressable onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}><View style={styles.tabIconWrap}><SymbolView name={icon as any} size={18} tintColor={color} fallback={<ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{fallback}</ThemedText>} /></View><ThemedText type="small" style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText></Pressable>;
 }
 
 const styles = StyleSheet.create({
@@ -259,14 +248,6 @@ const styles = StyleSheet.create({
   journalTitle: { color: '#3B82F6' },
   checkInButton: { minHeight: 42, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: Spacing.three },
   checkInText: { color: '#3B82F6', fontSize: 12 },
-  bottomTabs: { position: 'absolute', left: Spacing.three, right: Spacing.three, bottom: Spacing.one, minHeight: 70, borderRadius: Radius.large, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', ...Shadow.soft },
-  tabItem: { width: 58, alignItems: 'center', justifyContent: 'center', gap: Spacing.half },
-  tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
-  tabIcon: { color: '#64748B', fontSize: 16, fontWeight: '900' },
-  tabLabel: { color: '#64748B', fontSize: 10 },
-  tabActive: { color: '#3B82F6' },
-  addButton: { width: 58, height: 58, borderRadius: 29, alignItems: 'center', justifyContent: 'center', backgroundColor: '#3B82F6', marginTop: -24 },
-  addText: { color: '#FFFFFF', fontSize: 34, lineHeight: 38 },
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   error: { color: '#DC2626', textAlign: 'center' },
   pressed: { opacity: 0.75 },

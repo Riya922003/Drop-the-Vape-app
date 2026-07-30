@@ -1,4 +1,4 @@
-﻿import { useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { ProgressDashboard } from '@/components/progress/progress-dashboard';
@@ -76,6 +76,7 @@ export default function ProgressRoute() {
       onOpenProfile={() => router.push('/profile')}
       onOpenHome={() => router.push('/home')}
       onOpenProgress={() => router.push('/progress')}
+      onOpenPremium={() => router.push('/premium')}
     />
   );
 }

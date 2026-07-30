@@ -71,6 +71,7 @@ export function SettingsScreen() {
       onBack={() => router.back()}
       onOpenHome={() => router.push('/home')}
       onOpenProgress={() => router.push('/progress')}
+      onOpenPremium={() => router.push('/premium')}
       onOpenAchievements={() => router.push('/achievements')}
       onOpenSettings={() => router.push('/settings')}
       onLogout={logout}

@@ -3,6 +3,7 @@ import { SymbolView } from 'expo-symbols';
 import { useState, type ReactNode } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
+import { BottomTabs } from '@/components/navigation/bottom-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Screen } from '@/components/ui/app-foundation';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -21,6 +22,7 @@ type SettingsContentProps = {
   onBack: () => void;
   onOpenHome: () => void;
   onOpenProgress: () => void;
+  onOpenPremium: () => void;
   onOpenAchievements: () => void;
   onOpenSettings: () => void;
   onLogout: () => void;
@@ -46,7 +48,7 @@ function formatDate(value?: string) {
   return new Intl.DateTimeFormat(undefined, { month: 'short', year: 'numeric' }).format(new Date(value));
 }
 
-export function SettingsContent({ progress, quitProfile, error, isRefreshing, onRefresh, onRetry, onBack, onOpenHome, onOpenProgress, onOpenAchievements, onOpenSettings, onLogout }: SettingsContentProps) {
+export function SettingsContent({ progress, quitProfile, error, isRefreshing, onRefresh, onRetry, onBack, onOpenHome, onOpenProgress, onOpenPremium, onOpenAchievements, onOpenSettings, onLogout }: SettingsContentProps) {
   const [progressUpdates, setProgressUpdates] = useState(true);
   const [motivationalMessages, setMotivationalMessages] = useState(true);
   const [achievementAlerts, setAchievementAlerts] = useState(true);
@@ -122,13 +124,7 @@ export function SettingsContent({ progress, quitProfile, error, isRefreshing, on
           <ThemedText type="smallBold" style={styles.logoutText}>Log Out</ThemedText>
         </Pressable>
       </ScrollView>
-
-      <View style={styles.bottomTabs}>
-        <TabItem label="Home" icon="house" fallback="H" onPress={onOpenHome} />
-        <TabItem label="Progress" icon="chart.bar" fallback="P" onPress={onOpenProgress} />
-        <TabItem label="Achievements" icon="trophy" fallback="A" onPress={onOpenAchievements} />
-        <TabItem label="Settings" icon="gearshape" fallback="S" active onPress={onOpenSettings} />
-      </View>
+      <BottomTabs active="settings" rightTab="settings" onOpenHome={onOpenHome} onOpenProgress={onOpenProgress} onOpenPremium={onOpenPremium} onOpenAchievements={onOpenAchievements} onOpenRightTab={onOpenSettings} />
     </Screen>
   );
 }
@@ -173,11 +169,6 @@ function Toggle({ enabled }: { enabled: boolean }) {
 
 function HeroStat({ icon, fallback, value, label }: { icon: string; fallback: string; value: string; label: string }) {
   return <View style={styles.heroStat}><View style={styles.heroStatIcon}><SymbolIcon name={icon} fallback={fallback} color="#22C55E" size={18} /></View><View><ThemedText type="headline" style={styles.heroValue}>{value}</ThemedText><ThemedText type="small" style={styles.heroLabel}>{label}</ThemedText></View></View>;
-}
-
-function TabItem({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
-  const color = active ? '#3B82F6' : '#64748B';
-  return <Pressable onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}><SymbolIcon name={icon} fallback={fallback} color={color} size={18} /><ThemedText type="small" style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText></Pressable>;
 }
 
 function SymbolIcon({ name, fallback, color, size }: { name: string; fallback: string; color: string; size: number }) {
@@ -227,9 +218,5 @@ const styles = StyleSheet.create({
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   errorText: { color: '#DC2626', textAlign: 'center' },
   dangerText: { color: '#DC2626' },
-  bottomTabs: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: 72, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
-  tabItem: { minWidth: 70, alignItems: 'center', justifyContent: 'center', gap: Spacing.one },
-  tabLabel: { color: '#64748B', fontSize: 10 },
-  tabActive: { color: '#3B82F6', fontWeight: '800' },
   pressed: { opacity: 0.75 },
 });

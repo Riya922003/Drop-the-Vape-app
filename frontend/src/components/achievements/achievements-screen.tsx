@@ -1,9 +1,9 @@
 import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
+import { BottomTabs } from '@/components/navigation/bottom-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Screen } from '@/components/ui/app-foundation';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
@@ -138,6 +138,7 @@ function AchievementsContent({
   onRetry,
   onOpenHome,
   onOpenProgress,
+  onOpenPremium,
   onOpenAchievements,
   onOpenProfile,
 }: {
@@ -148,6 +149,7 @@ function AchievementsContent({
   onRetry: () => void;
   onOpenHome: () => void;
   onOpenProgress: () => void;
+  onOpenPremium: () => void;
   onOpenAchievements: () => void;
   onOpenProfile: () => void;
 }) {
@@ -212,13 +214,7 @@ function AchievementsContent({
 
         <View style={styles.badgeGrid}>{filteredBadges.map((badge) => <BadgeCard key={badge.key} badge={badge} />)}</View>
       </ScrollView>
-
-      <View style={styles.bottomTabs}>
-        <TabButton label="Home" icon="house" fallback="H" onPress={onOpenHome} />
-        <TabButton label="Progress" icon="chart.bar" fallback="P" onPress={onOpenProgress} />
-        <TabButton label="Achievements" icon="trophy" fallback="A" active onPress={onOpenAchievements} />
-        <TabButton label="Profile" icon="person" fallback="M" onPress={onOpenProfile} />
-      </View>
+      <BottomTabs active="achievements" onOpenHome={onOpenHome} onOpenProgress={onOpenProgress} onOpenPremium={onOpenPremium} onOpenAchievements={onOpenAchievements} onOpenRightTab={onOpenProfile} />
     </Screen>
   );
 }
@@ -240,15 +236,6 @@ function NumberBadge({ badge, locked }: { badge: ProgressMilestone; locked?: boo
   return <View style={[styles.numberBadge, locked && styles.numberBadgeLocked]}><ThemedText style={[styles.numberBadgeText, locked && styles.numberBadgeTextLocked]}>{lockedDayLabel(badge)}</ThemedText><ThemedText style={[styles.numberBadgeSub, locked && styles.numberBadgeTextLocked]}>{targetForBadge(badge) >= 365 ? 'YEAR' : 'DAYS'}</ThemedText></View>;
 }
 
-function TabButton({ icon, fallback, label, active, onPress }: { icon: string; fallback: string; label: string; active?: boolean; onPress?: () => void }) {
-  const color = active ? '#3B82F6' : '#64748B';
-  return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}>
-      <View style={styles.tabIconWrap}><SymbolView name={icon as any} size={19} tintColor={color} fallback={<ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{fallback}</ThemedText>} /></View>
-      <ThemedText style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText>
-    </Pressable>
-  );
-}
 export function AchievementsScreen() {
   const router = useRouter();
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -303,6 +290,7 @@ export function AchievementsScreen() {
       onRetry={() => loadProgress()}
       onOpenHome={() => router.push('/home')}
       onOpenProgress={() => router.push('/progress')}
+      onOpenPremium={() => router.push('/premium')}
       onOpenAchievements={() => router.push('/achievements')}
       onOpenProfile={() => router.push('/profile')}
     />
@@ -361,11 +349,5 @@ const styles = StyleSheet.create({
   numberBadgeTextLocked: { color: '#64748B' },
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   error: { color: '#DC2626', textAlign: 'center' },
-  bottomTabs: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: 72, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
-  tabButton: { alignItems: 'center', justifyContent: 'center', gap: Spacing.one, minWidth: 70 },
-  tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
-  tabIcon: { color: '#64748B', fontSize: 20 },
-  tabLabel: { color: '#64748B', fontSize: 10 },
-  tabActive: { color: '#3B82F6', fontWeight: '800' },
   pressed: { opacity: 0.75 },
 });

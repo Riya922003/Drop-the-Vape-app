@@ -1,4 +1,4 @@
-﻿import { useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { HomeDashboard } from '@/components/home/home-dashboard';
@@ -75,7 +75,7 @@ export default function HomeRoute() {
       onOpenProfile={() => router.push('/profile')}
       onOpenHome={() => router.push('/home')}
       onOpenProgress={() => router.push('/progress')}
+      onOpenPremium={() => router.push('/premium')}
     />
   );
 }
-

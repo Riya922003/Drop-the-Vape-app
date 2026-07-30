@@ -1,0 +1,74 @@
+# Local project planning and temporary files
+phases/
+temp/
+frontend-dev.log
+
+# Local assistant/tooling notes
+.agents/
+.codex/
+CLAUDE.md
+frontend/CLAUDE.md
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+pnpm-debug.*
+
+# Expo and React Native
+.expo/
+.expo-shared/
+expo-env.d.ts
+web-build/
+dist/
+.metro-health-check*
+
+# Generated native folders
+frontend/ios/
+frontend/android/
+ios/
+android/
+
+# Build outputs and caches
+build/
+coverage/
+.turbo/
+.next/
+out/
+.cache/
+tmp/
+
+# TypeScript
+*.tsbuildinfo
+
+# Native signing and generated files
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+.kotlin/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+frontend/.git-nested-backup/
+.claude/
+**/.claude/

@@ -1,4 +1,4 @@
-﻿import { Image } from 'expo-image';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
@@ -125,7 +125,27 @@ function lockedDayLabel(badge: ProgressMilestone) {
   return String(target);
 }
 
-function AchievementsContent({ progress, error, isRefreshing, onRefresh, onRetry }: { progress: UserProgress; error?: string; isRefreshing: boolean; onRefresh: () => void; onRetry: () => void }) {
+function AchievementsContent({
+  progress,
+  error,
+  isRefreshing,
+  onRefresh,
+  onRetry,
+  onOpenHome,
+  onOpenProgress,
+  onOpenAchievements,
+  onOpenProfile,
+}: {
+  progress: UserProgress;
+  error?: string;
+  isRefreshing: boolean;
+  onRefresh: () => void;
+  onRetry: () => void;
+  onOpenHome: () => void;
+  onOpenProgress: () => void;
+  onOpenAchievements: () => void;
+  onOpenProfile: () => void;
+}) {
   const badges = progress.milestones.length ? progress.milestones : fallbackMilestones;
   const current = bestUnlockedBadge(badges);
   const next = firstLockedBadge(badges);
@@ -178,6 +198,13 @@ function AchievementsContent({ progress, error, isRefreshing, onRefresh, onRetry
 
         <View style={styles.badgeGrid}>{badges.map((badge) => <BadgeCard key={badge.key} badge={badge} />)}</View>
       </ScrollView>
+
+      <View style={styles.bottomTabs}>
+        <TabButton label="Home" icon="H" onPress={onOpenHome} />
+        <TabButton label="Progress" icon="P" onPress={onOpenProgress} />
+        <TabButton label="Achievements" icon="A" active onPress={onOpenAchievements} />
+        <TabButton label="Profile" icon="M" onPress={onOpenProfile} />
+      </View>
     </Screen>
   );
 }
@@ -197,6 +224,15 @@ function BadgeCard({ badge }: { badge: ProgressMilestone }) {
 
 function NumberBadge({ badge, locked }: { badge: ProgressMilestone; locked?: boolean }) {
   return <View style={[styles.numberBadge, locked && styles.numberBadgeLocked]}><ThemedText style={[styles.numberBadgeText, locked && styles.numberBadgeTextLocked]}>{lockedDayLabel(badge)}</ThemedText><ThemedText style={[styles.numberBadgeSub, locked && styles.numberBadgeTextLocked]}>{targetForBadge(badge) >= 365 ? 'YEAR' : 'DAYS'}</ThemedText></View>;
+}
+
+function TabButton({ icon, label, active, onPress }: { icon: string; label: string; active?: boolean; onPress?: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}>
+      <ThemedText style={[styles.tabIcon, active && styles.tabActive]}>{icon}</ThemedText>
+      <ThemedText style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText>
+    </Pressable>
+  );
 }
 
 export function AchievementsScreen() {
@@ -244,12 +280,24 @@ export function AchievementsScreen() {
     return <Screen centered><ThemedText type="headline" style={{ textAlign: 'center' }}>{error || 'Unable to load achievements.'}</ThemedText><Button label="Try again" onPress={() => loadProgress()} /></Screen>;
   }
 
-  return <AchievementsContent progress={progress} error={error} isRefreshing={isRefreshing} onRefresh={() => loadProgress('refresh')} onRetry={() => loadProgress()} />;
+  return (
+    <AchievementsContent
+      progress={progress}
+      error={error}
+      isRefreshing={isRefreshing}
+      onRefresh={() => loadProgress('refresh')}
+      onRetry={() => loadProgress()}
+      onOpenHome={() => router.push('/home')}
+      onOpenProgress={() => router.push('/progress')}
+      onOpenAchievements={() => router.push('/achievements')}
+      onOpenProfile={() => router.push('/profile')}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
   screen: { backgroundColor: '#F5FBFF', paddingHorizontal: Spacing.three, paddingTop: Spacing.three, paddingBottom: 0 },
-  content: { gap: Spacing.three, paddingBottom: Spacing.four },
+  content: { gap: Spacing.three, paddingBottom: 92 },
   header: { minHeight: 112, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', overflow: 'hidden' },
   headerCopy: { flex: 1, gap: Spacing.two },
   title: { color: '#071B44', fontSize: 34, lineHeight: 40 },
@@ -299,5 +347,10 @@ const styles = StyleSheet.create({
   numberBadgeTextLocked: { color: '#7B8798' },
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   error: { color: '#DC2626', textAlign: 'center' },
+  bottomTabs: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: 72, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#DCEBFA', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
+  tabButton: { alignItems: 'center', justifyContent: 'center', gap: Spacing.one, minWidth: 70 },
+  tabIcon: { color: '#8B98AF', fontSize: 20 },
+  tabLabel: { color: '#8B98AF', fontSize: 10 },
+  tabActive: { color: '#1685FF', fontWeight: '800' },
   pressed: { opacity: 0.75 },
 });

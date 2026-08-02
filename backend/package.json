@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Backend API for Drop The Vape.",
   "main": "src/server.js",
+  "packageManager": "pnpm@10.0.0",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"

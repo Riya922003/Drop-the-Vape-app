@@ -11,6 +11,8 @@ import { VapeLastsStep } from '@/components/setup/vape-lasts-step';
 import { ThemedText } from '@/components/themed-text';
 import { AppTextInput, Button, Screen } from '@/components/ui/app-foundation';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
+import { appDataCache } from '@/lib/app-data-cache';
+import { getProgress } from '@/lib/progress-api';
 import { createQuitProfile, type QuitProfileInput } from '@/lib/quit-profile-api';
 import { EMPTY_DRAFT, SETUP_STEPS, type SetupDraft } from '@/lib/setup-steps';
 import { sessionStore } from '@/lib/session-store';
@@ -125,9 +127,12 @@ export default function SetupRoute() {
     setError('');
 
     try {
-      await createQuitProfile(token, toProfileInput(draft));
+      const profileResult = await createQuitProfile(token, toProfileInput(draft));
+      appDataCache.setQuitProfile(profileResult.quitProfile);
+      const progressResult = await getProgress(token);
+      appDataCache.setProgress(progressResult.progress);
       sessionStore.clearSetupDraft();
-      router.replace('/progress');
+      router.replace('/home');
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Please check your answers and try again.');
     } finally {
@@ -212,11 +217,7 @@ export default function SetupRoute() {
           ) : step ? (
             <>
               <View style={styles.brandBlock}>
-                <View style={styles.logoMark}>
-                  <ThemedText type="headline" style={styles.logoIcon}>
-                    D
-                  </ThemedText>
-                </View>
+                <Image source={require('@/assets/drop-the-vape/logo.png')} style={styles.logoImage} contentFit="contain" />
                 <ThemedText type="smallBold" style={styles.logoText}>
                   Drop Vape
                 </ThemedText>
@@ -306,21 +307,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.one,
   },
-  logoMark: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#EAF5FF',
-    borderWidth: 1,
-    borderColor: '#EAF5FF',
-  },
-  logoIcon: {
-    color: '#3B82F6',
-    fontSize: 20,
-    lineHeight: 24,
-  },
+  logoImage: { width: 44, height: 44 },
   logoText: {
     color: '#1E293B',
   },

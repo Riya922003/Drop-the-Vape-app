@@ -57,6 +57,7 @@ const achievementIconByKey: Record<string, number> = {
 
 type HomeDashboardProps = {
   progress: UserProgress;
+  userName: string;
   error?: string;
   isRefreshing: boolean;
   onRefresh: () => void;
@@ -83,16 +84,17 @@ function dashboardAchievements(progress: UserProgress) {
   return preferredKeys.map((key) => milestones.find((item) => item.key === key)).filter(Boolean) as ProgressMilestone[];
 }
 
-export function HomeDashboard({ progress, error, isRefreshing, onRefresh, onRetry, onOpenAchievements, onOpenProfile, onOpenHome, onOpenProgress, onOpenPremium, onOpenSupport }: HomeDashboardProps) {
+export function HomeDashboard({ progress, userName, error, isRefreshing, onRefresh, onRetry, onOpenAchievements, onOpenProfile, onOpenHome, onOpenProgress, onOpenPremium, onOpenSupport }: HomeDashboardProps) {
   const achievements = dashboardAchievements(progress);
   const timeline = healthTimelineRules.map((item) => ({ ...item, active: progress.daysVapeFree >= item.thresholdDays }));
+  const firstName = userName.trim().split(/\s+/)[0] || 'there';
 
   return (
     <Screen style={styles.screen}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
         <View style={styles.topBar}>
           <View style={styles.brandRow}>
-            <View style={styles.brandIcon}><ThemedText style={styles.brandIconText}>DV</ThemedText></View>
+            <Image source={require('@/assets/drop-the-vape/logo.png')} style={styles.brandLogo} contentFit="contain" />
             <ThemedText type="smallBold" style={styles.brandText}>Drop Vape</ThemedText>
           </View>
           <View style={styles.headerActions}>
@@ -103,7 +105,7 @@ export function HomeDashboard({ progress, error, isRefreshing, onRefresh, onRetr
 
         <View style={styles.heroRow}>
           <View style={styles.greetingBlock}>
-            <ThemedText type="headline" style={styles.greeting}>Good morning,{`\n`}Pradeep!</ThemedText>
+            <ThemedText type="headline" style={styles.greeting}>Good morning,{`\n`}{firstName}!</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">You're doing great. Keep going!</ThemedText>
           </View>
           <View style={styles.streakCard}>
@@ -188,8 +190,7 @@ const styles = StyleSheet.create({
   content: { gap: Spacing.three, paddingBottom: 104 },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
-  brandIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF5FF', borderWidth: 1, borderColor: '#EAF5FF' },
-  brandIconText: { color: '#3B82F6', fontSize: 12, fontWeight: '800' },
+  brandLogo: { width: 36, height: 36 },
   brandText: { color: '#1E293B', fontSize: 17 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   iconButton: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },

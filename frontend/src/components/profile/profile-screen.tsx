@@ -8,6 +8,8 @@ import { BottomTabs } from '@/components/navigation/bottom-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Screen } from '@/components/ui/app-foundation';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
+import { appDataCache } from '@/lib/app-data-cache';
+import { getMe, type AuthUser } from '@/lib/auth-api';
 import { getProgress, type ProgressMilestone, type UserProgress } from '@/lib/progress-api';
 import { getQuitProfile, type QuitProfile } from '@/lib/quit-profile-api';
 import { sessionStore } from '@/lib/session-store';
@@ -88,7 +90,7 @@ type ProfileContentProps = {
   onOpenAchievements: () => void;
   onOpenProfile: () => void;
   onOpenSettings: () => void;
-  onLogout: () => void;
+  userName: string;
 };
 
 function ProfileContent({
@@ -104,9 +106,10 @@ function ProfileContent({
   onOpenAchievements,
   onOpenProfile,
   onOpenSettings,
-  onLogout,
+  userName,
 }: ProfileContentProps) {
   const achievements = achievementsFor(progress);
+  const firstName = userName.trim().split(/\s+/)[0] || 'there';
 
   return (
     <Screen style={styles.screen}>
@@ -132,7 +135,7 @@ function ProfileContent({
               <View style={styles.cameraBadge}><ThemedText style={styles.cameraIcon}>o</ThemedText></View>
             </View>
             <View style={styles.heroCopy}>
-              <ThemedText type="headline" style={styles.greeting}>Hi, Alex!</ThemedText>
+              <ThemedText type="headline" style={styles.greeting}>Hi, {firstName}!</ThemedText>
               <ThemedText type="small" style={styles.memberText}>Member since {formatDate(quitProfile.setupCompletedAt)}</ThemedText>
             </View>
           </View>
@@ -156,10 +159,10 @@ function ProfileContent({
 
         <Section title="My Plan">
           <View style={styles.rowsCard}>
-            <InfoRow icon="G" label="Quit Goal" value={quitGoalLabel(quitProfile.quitGoal)} color="#3B82F6" />
-            <InfoRow icon="D" label="Quit Date" value={formatDate(quitProfile.quitStartDate)} color="#3B82F6" />
-            <InfoRow icon="R" label="Daily Reminder" value="8:00 PM" color="#22C55E" />
-            <InfoRow icon="M" label="Motivation Style" value="Encouraging" color="#22C55E" />
+            <InfoRow icon="target" fallback="G" label="Quit Goal" value={quitGoalLabel(quitProfile.quitGoal)} color="#3B82F6" />
+            <InfoRow icon="calendar" fallback="D" label="Quit Date" value={formatDate(quitProfile.quitStartDate)} color="#3B82F6" />
+            <InfoRow icon="bell" fallback="R" label="Daily Reminder" value="8:00 PM" color="#22C55E" />
+            <InfoRow icon="message" fallback="M" label="Motivation Style" value="Encouraging" color="#22C55E" />
           </View>
         </Section>
 
@@ -190,7 +193,6 @@ function ProfileContent({
             { icon: 'shield', fallback: 'S', label: 'Privacy Policy' },
             { icon: 'doc.text', fallback: 'D', label: 'Terms of Service' },
             { icon: 'trash', fallback: 'X', label: 'Delete Account' },
-            { icon: 'rectangle.portrait.and.arrow.right', fallback: '>', label: 'Log Out', danger: true, onPress: onLogout },
           ]} />
         </View>
       </ScrollView>
@@ -237,10 +239,10 @@ function SummaryMetric({ icon, label, value, color }: { icon: string; label: str
   );
 }
 
-function InfoRow({ icon, label, value, color }: { icon: string; label: string; value: string; color: string }) {
+function InfoRow({ icon, fallback, label, value, color }: { icon: string; fallback: string; label: string; value: string; color: string }) {
   return (
     <Pressable style={({ pressed }) => [styles.infoRow, pressed && styles.pressed]}>
-      <View style={[styles.rowIcon, { backgroundColor: `${color}16` }]}><ThemedText style={[styles.rowIconText, { color }]}>{icon}</ThemedText></View>
+      <View style={[styles.rowIcon, { backgroundColor: `${color}16` }]}><SymbolView name={icon as any} size={16} tintColor={color} fallback={<ThemedText style={[styles.rowIconText, { color }]}>{fallback}</ThemedText>} /></View>
       <ThemedText type="smallBold" style={styles.rowLabel}>{label}</ThemedText>
       <ThemedText type="small" style={styles.rowValue} numberOfLines={1}>{value}</ThemedText>
       <ThemedText style={styles.chevron}>&gt;</ThemedText>
@@ -291,8 +293,9 @@ function MenuGroup({ title, items }: { title: string; items: MenuItem[] }) {
 
 export function ProfileScreen() {
   const router = useRouter();
-  const [progress, setProgress] = useState<UserProgress | null>(null);
-  const [quitProfile, setQuitProfile] = useState<QuitProfile | null>(null);
+  const [progress, setProgress] = useState<UserProgress | null>(() => appDataCache.getProgress());
+  const [quitProfile, setQuitProfile] = useState<QuitProfile | null>(() => appDataCache.getQuitProfile());
+  const [user, setUser] = useState<AuthUser | null>(() => sessionStore.getUser());
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -308,9 +311,13 @@ export function ProfileScreen() {
     setError('');
 
     try {
-      const [progressResult, profileResult] = await Promise.all([getProgress(token), getQuitProfile(token)]);
+      const [progressResult, profileResult, meResult] = await Promise.all([getProgress(token), getQuitProfile(token), getMe(token)]);
+      appDataCache.setProgress(progressResult.progress);
+      appDataCache.setQuitProfile(profileResult.quitProfile);
+      sessionStore.setUser(meResult.user);
       setProgress(progressResult.progress);
       setQuitProfile(profileResult.quitProfile);
+      setUser(meResult.user);
     } catch (loadError) {
       const message = loadError instanceof Error ? loadError.message : 'Unable to load your profile.';
       if (message.toLowerCase().includes('quit profile')) {
@@ -327,11 +334,6 @@ export function ProfileScreen() {
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
-
-  const logout = useCallback(() => {
-    sessionStore.clearToken();
-    router.replace('/welcome');
-  }, [router]);
 
   if (isLoading && (!progress || !quitProfile)) {
     return (
@@ -364,7 +366,7 @@ export function ProfileScreen() {
       onOpenAchievements={() => router.push('/achievements')}
       onOpenProfile={() => router.push('/profile')}
       onOpenSettings={() => router.push('/settings')}
-      onLogout={logout}
+      userName={user?.name ?? ''}
     />
   );
 }
@@ -410,7 +412,7 @@ const styles = StyleSheet.create({
   rowsCard: { borderWidth: 1, borderColor: '#EAF5FF', borderRadius: Radius.medium, overflow: 'hidden' },
   infoRow: { minHeight: 45, flexDirection: 'row', alignItems: 'center', gap: Spacing.two, paddingHorizontal: Spacing.two, borderBottomWidth: 1, borderBottomColor: '#EAF5FF' },
   rowIcon: { width: 28, height: 28, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
-  rowIconText: { fontSize: 14, fontWeight: '900' },
+  rowIconText: { fontSize: 13, fontWeight: '900' },
   rowLabel: { flex: 1, color: '#1E293B', fontSize: 11 },
   rowValue: { maxWidth: 132, color: '#64748B', fontSize: 11, textAlign: 'right' },
   chevron: { color: '#64748B', fontSize: 14, lineHeight: 18, fontWeight: '900' },

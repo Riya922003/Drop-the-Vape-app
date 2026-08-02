@@ -6,7 +6,9 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View
 import { ThemedText } from '@/components/themed-text';
 import { AppTextInput, Screen } from '@/components/ui/app-foundation';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
+import { appDataCache } from '@/lib/app-data-cache';
 import { login, signUp } from '@/lib/auth-api';
+import { getProgress } from '@/lib/progress-api';
 import { getQuitProfile } from '@/lib/quit-profile-api';
 import { sessionStore } from '@/lib/session-store';
 
@@ -67,8 +69,10 @@ export default function AuthRoute() {
 
   async function routeAfterAuth(token: string) {
     try {
-      await getQuitProfile(token);
-      router.replace('/progress');
+      const [profileResult, progressResult] = await Promise.all([getQuitProfile(token), getProgress(token)]);
+      appDataCache.setQuitProfile(profileResult.quitProfile);
+      appDataCache.setProgress(progressResult.progress);
+      router.replace('/home');
     } catch {
       router.replace('/setup');
     }
@@ -90,6 +94,7 @@ export default function AuthRoute() {
           : await login({ email: email.trim(), password });
 
       sessionStore.setToken(result.token);
+      sessionStore.setUser(result.user);
       await routeAfterAuth(result.token);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Please check your details and try again.');
@@ -111,9 +116,7 @@ export default function AuthRoute() {
   function renderBrand() {
     return (
       <View style={styles.brandBlock}>
-        <View style={styles.logoMark}>
-          <ThemedText type="headline" style={styles.logoIcon}>D</ThemedText>
-        </View>
+        <Image source={require('@/assets/drop-the-vape/logo.png')} style={styles.logoImage} contentFit="contain" />
         <ThemedText type="smallBold" style={styles.logoText}>Drop Vape</ThemedText>
       </View>
     );
@@ -208,8 +211,7 @@ const styles = StyleSheet.create({
   backIcon: { color: '#1E293B', fontSize: 24 },
   content: { gap: Spacing.three, paddingBottom: Spacing.three, paddingTop: Spacing.one },
   brandBlock: { alignItems: 'center', gap: Spacing.one },
-  logoMark: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF5FF', borderWidth: 1, borderColor: '#EAF5FF' },
-  logoIcon: { color: '#3B82F6', fontSize: 22, lineHeight: 26 },
+  logoImage: { width: 48, height: 48 },
   logoText: { color: '#1E293B', fontSize: 18, lineHeight: 24 },
   heroFrame: { height: 286, marginTop: Spacing.one, overflow: 'hidden' },
   formHeroFrame: { height: 210, overflow: 'hidden' },
@@ -239,4 +241,3 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.75 },
   disabled: { opacity: 0.55 },
 });
-

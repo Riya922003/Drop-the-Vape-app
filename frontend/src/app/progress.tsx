@@ -4,12 +4,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { ProgressDashboard } from '@/components/progress/progress-dashboard';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Screen } from '@/components/ui/app-foundation';
+import { appDataCache } from '@/lib/app-data-cache';
 import { getProgress, type UserProgress } from '@/lib/progress-api';
 import { sessionStore } from '@/lib/session-store';
 
 export default function ProgressRoute() {
   const router = useRouter();
-  const [progress, setProgress] = useState<UserProgress | null>(null);
+  const [progress, setProgress] = useState<UserProgress | null>(() => appDataCache.getProgress());
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -27,6 +28,7 @@ export default function ProgressRoute() {
 
       try {
         const result = await getProgress(token);
+        appDataCache.setProgress(result.progress);
         setProgress(result.progress);
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Unable to load your progress.';

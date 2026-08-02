@@ -47,11 +47,10 @@ function TabItem({ icon, fallback, label, active, onPress }: { icon: string; fal
   const color = active ? '#3B82F6' : '#64748B';
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}>
+    <Pressable accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.tabItem, pressed && styles.pressed]}>
       <View style={styles.tabIconWrap}>
-        <SymbolView name={icon as any} size={18} tintColor={color} fallback={<ThemedText style={[styles.tabFallback, active && styles.tabActive]}>{fallback}</ThemedText>} />
+        <SymbolView name={icon as any} size={22} tintColor={color} fallback={<ThemedText style={[styles.tabFallback, active && styles.tabActive]}>{fallback}</ThemedText>} />
       </View>
-      <ThemedText type="small" style={[styles.tabLabel, active && styles.tabActive]}>{label}</ThemedText>
     </Pressable>
   );
 }
@@ -59,10 +58,9 @@ function TabItem({ icon, fallback, label, active, onPress }: { icon: string; fal
 const styles = StyleSheet.create({
   tabs: { position: 'absolute', left: 0, right: 0, bottom: 0, minHeight: 72, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' },
   floatingTabs: { left: Spacing.three, right: Spacing.three, bottom: Spacing.one, minHeight: 70, borderRadius: Radius.large, borderTopWidth: 0, ...Shadow.soft },
-  tabItem: { width: 64, alignItems: 'center', justifyContent: 'center', gap: Spacing.half },
-  tabIconWrap: { width: 22, height: 22, alignItems: 'center', justifyContent: 'center' },
+  tabItem: { width: 54, height: 54, alignItems: 'center', justifyContent: 'center' },
+  tabIconWrap: { width: 30, height: 30, alignItems: 'center', justifyContent: 'center' },
   tabFallback: { color: '#64748B', fontSize: 16, fontWeight: '900' },
-  tabLabel: { color: '#64748B', fontSize: 10 },
   tabActive: { color: '#3B82F6', fontWeight: '800' },
   plusButton: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: '#3B82F6', marginTop: -26, ...Shadow.soft },
   plusText: { color: '#FFFFFF', fontSize: 32, lineHeight: 36, fontWeight: '800' },

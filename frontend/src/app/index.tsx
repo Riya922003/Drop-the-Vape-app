@@ -1,8 +1,9 @@
-﻿import { useRootNavigationState, useRouter } from 'expo-router';
+import { useRootNavigationState, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 
 import { ThemedText } from '@/components/themed-text';
 import { Screen } from '@/components/ui/app-foundation';
+import { appDataCache } from '@/lib/app-data-cache';
 import { getMe } from '@/lib/auth-api';
 import { getQuitProfile } from '@/lib/quit-profile-api';
 import { sessionStore } from '@/lib/session-store';
@@ -37,9 +38,12 @@ export default function EntryRoute() {
       }
 
       try {
-        await getMe(token);
+        const meResult = await getMe(token);
+        sessionStore.setUser(meResult.user);
       } catch {
         sessionStore.clearToken();
+        sessionStore.clearUser();
+        appDataCache.clear();
         if (isMounted) {
           setMessage('Please sign in again.');
         }
@@ -48,7 +52,8 @@ export default function EntryRoute() {
       }
 
       try {
-        await getQuitProfile(token);
+        const profileResult = await getQuitProfile(token);
+        appDataCache.setQuitProfile(profileResult.quitProfile);
         replaceWhenMounted('/home');
       } catch {
         replaceWhenMounted('/setup');
@@ -71,4 +76,3 @@ export default function EntryRoute() {
     </Screen>
   );
 }
-

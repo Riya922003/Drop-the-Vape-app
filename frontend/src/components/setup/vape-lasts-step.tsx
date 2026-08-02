@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -29,11 +30,7 @@ export function VapeLastsStep({ options, value, weeklyVapes, isLoading, onChange
   return (
     <View style={styles.wrap}>
       <View style={styles.brandBlock}>
-        <View style={styles.logoMark}>
-          <ThemedText type="headline" style={styles.logoIcon}>
-            D
-          </ThemedText>
-        </View>
+        <Image source={require('@/assets/drop-the-vape/logo.png')} style={styles.logoImage} contentFit="contain" />
         <ThemedText type="smallBold" style={styles.logoText}>
           Drop Vape
         </ThemedText>
@@ -154,21 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.one,
   },
-  logoMark: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#EAF5FF',
-    borderWidth: 1,
-    borderColor: '#EAF5FF',
-  },
-  logoIcon: {
-    color: '#3B82F6',
-    fontSize: 22,
-    lineHeight: 26,
-  },
+  logoImage: { width: 48, height: 48 },
   logoText: {
     color: '#1E293B',
     fontSize: 18,

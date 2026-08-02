@@ -4,14 +4,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { SettingsContent } from '@/components/settings/settings-content';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Screen } from '@/components/ui/app-foundation';
+import { appDataCache } from '@/lib/app-data-cache';
 import { getProgress, type UserProgress } from '@/lib/progress-api';
 import { getQuitProfile, type QuitProfile } from '@/lib/quit-profile-api';
 import { sessionStore } from '@/lib/session-store';
 
 export function SettingsScreen() {
   const router = useRouter();
-  const [progress, setProgress] = useState<UserProgress | null>(null);
-  const [quitProfile, setQuitProfile] = useState<QuitProfile | null>(null);
+  const [progress, setProgress] = useState<UserProgress | null>(() => appDataCache.getProgress());
+  const [quitProfile, setQuitProfile] = useState<QuitProfile | null>(() => appDataCache.getQuitProfile());
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -28,6 +29,8 @@ export function SettingsScreen() {
 
     try {
       const [progressResult, profileResult] = await Promise.all([getProgress(token), getQuitProfile(token)]);
+      appDataCache.setProgress(progressResult.progress);
+      appDataCache.setQuitProfile(profileResult.quitProfile);
       setProgress(progressResult.progress);
       setQuitProfile(profileResult.quitProfile);
     } catch (loadError) {
@@ -49,6 +52,7 @@ export function SettingsScreen() {
 
   const logout = useCallback(() => {
     sessionStore.clearToken();
+    appDataCache.clear();
     router.replace('/welcome');
   }, [router]);
 

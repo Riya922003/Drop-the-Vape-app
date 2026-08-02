@@ -33,7 +33,7 @@ export function AnimatedSplashOverlay() {
     },
   });
 
-  const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
+  const image = <Image style={styles.image} source={require('@/assets/drop-the-vape/logo.png')} />;
 
   return animate ? (
     <Animated.View
@@ -99,12 +99,12 @@ export function AnimatedIcon() {
   return (
     <View style={styles.iconContainer}>
       <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
-        <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
+        <Image style={styles.glow} source={require('@/assets/drop-the-vape/logo.png')} />
       </Animated.View>
 
       <Animated.View entering={keyframe.duration(DURATION)} style={styles.background} />
       <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
-        <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
+        <Image style={styles.image} source={require('@/assets/drop-the-vape/logo.png')} />
       </Animated.View>
     </View>
   );
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 76,
-    height: 71,
+    height: 76,
   },
   background: {
     borderRadius: 40,
@@ -146,4 +146,3 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
 });
-

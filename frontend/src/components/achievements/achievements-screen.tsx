@@ -7,6 +7,7 @@ import { BottomTabs } from '@/components/navigation/bottom-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Screen } from '@/components/ui/app-foundation';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
+import { appDataCache } from '@/lib/app-data-cache';
 import { getProgress, type ProgressMilestone, type UserProgress } from '@/lib/progress-api';
 import { sessionStore } from '@/lib/session-store';
 
@@ -103,9 +104,12 @@ function badgeCategory(badge: ProgressMilestone) {
   return categoryByKey[badge.key] ?? 'Goals';
 }
 
-function bestUnlockedBadge(badges: ProgressMilestone[]) {
-  const unlocked = badges.filter((badge) => badge.unlocked);
-  return unlocked[unlocked.length - 1] ?? badges[0];
+function badgeAccent(badge: ProgressMilestone) {
+  const category = badgeCategory(badge);
+  if (category === 'Health') return '#DC2626';
+  if (category === 'Savings') return '#22C55E';
+  if (category === 'Streak') return '#3B82F6';
+  return '#64748B';
 }
 
 function firstLockedBadge(badges: ProgressMilestone[]) {
@@ -156,7 +160,6 @@ function AchievementsContent({
   const [selectedFilter, setSelectedFilter] = useState<AchievementFilter>('All');
   const badges = progress.milestones.length ? progress.milestones : fallbackMilestones;
   const filteredBadges = selectedFilter === 'All' ? badges : badges.filter((badge) => badgeCategory(badge) === selectedFilter);
-  const current = bestUnlockedBadge(badges);
   const next = firstLockedBadge(badges);
   const nextPercent = percentFor(progress, next);
 
@@ -172,19 +175,6 @@ function AchievementsContent({
         </View>
 
         {error ? <View style={styles.errorCard}><ThemedText style={styles.error}>{error}</ThemedText><Button label="Try again" onPress={onRetry} /></View> : null}
-
-        <View style={styles.currentCard}>
-          <View style={styles.currentBadgeFrame}>
-            <Image source={imageByKey[current.key] ?? badgeImages.gold} style={styles.currentBadgeImage} contentFit="contain" />
-            <View style={styles.ribbon}><ThemedText type="smallBold" style={styles.ribbonText}>{targetForBadge(current)} DAYS</ThemedText></View>
-          </View>
-          <View style={styles.currentCopy}>
-            <ThemedText type="smallBold" style={styles.currentMeta}>Current Milestone</ThemedText>
-            <ThemedText type="headline" style={styles.currentTitle}>{current.label} Vape-Free</ThemedText>
-            <ThemedText type="small" style={styles.currentBody}>{current.unlocked ? 'Congratulations! You have unlocked this milestone.' : 'Keep going to unlock this milestone.'}</ThemedText>
-            <Pressable style={({ pressed }) => [styles.shareButton, pressed && styles.pressed]}><ThemedText type="smallBold" style={styles.shareText}>Share Achievement</ThemedText></Pressable>
-          </View>
-        </View>
 
         <View style={styles.nextCard}>
           <ThemedText type="smallBold" style={styles.sectionTitle}>Next Achievement</ThemedText>
@@ -220,25 +210,32 @@ function AchievementsContent({
 }
 
 function BadgeCard({ badge }: { badge: ProgressMilestone }) {
+  const accent = badgeAccent(badge);
+  const category = badgeCategory(badge);
+
   return (
-    <View style={[styles.badgeCard, !badge.unlocked && styles.lockedCard]}>
-      {imageByKey[badge.key] && badge.unlocked ? <Image source={imageByKey[badge.key]} style={styles.badgeImage} contentFit="contain" /> : <NumberBadge badge={badge} locked={!badge.unlocked} />}
-      <View style={styles.badgeCopy}>
-        <ThemedText type="smallBold" style={styles.badgeTitle}>{badge.label}</ThemedText>
-        <ThemedText style={styles.badgeCategory}>{badgeCategory(badge)}</ThemedText>
+    <View style={[styles.badgeCard, { borderColor: badge.unlocked ? `${accent}55` : '#EAF5FF' }, !badge.unlocked && styles.lockedCard]}>
+      <View style={[styles.badgeAccentRail, { backgroundColor: accent }]} />
+      <View style={[styles.badgeIconShell, { backgroundColor: badge.unlocked ? `${accent}18` : '#EAF5FF' }]}>
+        {imageByKey[badge.key] && badge.unlocked ? <Image source={imageByKey[badge.key]} style={styles.badgeImage} contentFit="contain" /> : <NumberBadge badge={badge} locked={!badge.unlocked} />}
       </View>
-      <View style={[styles.statusDot, badge.unlocked ? styles.statusUnlocked : styles.statusLocked]}><ThemedText style={styles.statusText}>{badge.unlocked ? 'Y' : 'L'}</ThemedText></View>
+      <View style={styles.badgeCopy}>
+        <ThemedText type="smallBold" style={styles.badgeTitle} numberOfLines={2}>{badge.label}</ThemedText>
+        <View style={[styles.badgeCategoryPill, { backgroundColor: `${accent}14` }]}>
+          <ThemedText style={[styles.badgeCategory, { color: accent }]}>{category}</ThemedText>
+        </View>
+      </View>
+      <View style={[styles.statusChip, badge.unlocked ? styles.statusUnlocked : styles.statusLocked]}><ThemedText style={[styles.statusText, !badge.unlocked && styles.statusTextLocked]}>{badge.unlocked ? 'Earned' : 'Locked'}</ThemedText></View>
     </View>
   );
 }
-
 function NumberBadge({ badge, locked }: { badge: ProgressMilestone; locked?: boolean }) {
   return <View style={[styles.numberBadge, locked && styles.numberBadgeLocked]}><ThemedText style={[styles.numberBadgeText, locked && styles.numberBadgeTextLocked]}>{lockedDayLabel(badge)}</ThemedText><ThemedText style={[styles.numberBadgeSub, locked && styles.numberBadgeTextLocked]}>{targetForBadge(badge) >= 365 ? 'YEAR' : 'DAYS'}</ThemedText></View>;
 }
 
 export function AchievementsScreen() {
   const router = useRouter();
-  const [progress, setProgress] = useState<UserProgress | null>(null);
+  const [progress, setProgress] = useState<UserProgress | null>(() => appDataCache.getProgress());
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -255,6 +252,7 @@ export function AchievementsScreen() {
 
     try {
       const result = await getProgress(token);
+      appDataCache.setProgress(result.progress);
       setProgress(result.progress);
     } catch (loadError) {
       const message = loadError instanceof Error ? loadError.message : 'Unable to load achievements.';
@@ -305,17 +303,6 @@ const styles = StyleSheet.create({
   title: { color: '#1E293B', fontSize: 34, lineHeight: 40 },
   subtitle: { maxWidth: 250, lineHeight: 19 },
   headerImage: { width: 150, height: 112, marginRight: -10 },
-  currentCard: { minHeight: 150, borderRadius: Radius.large, backgroundColor: '#1E293B', flexDirection: 'row', gap: Spacing.three, padding: Spacing.three, overflow: 'hidden', ...Shadow.soft },
-  currentBadgeFrame: { width: 135, alignItems: 'center', justifyContent: 'center' },
-  currentBadgeImage: { width: 118, height: 118 },
-  ribbon: { position: 'absolute', bottom: 12, borderRadius: Radius.small, backgroundColor: '#3B82F6', paddingHorizontal: Spacing.two, paddingVertical: Spacing.one },
-  ribbonText: { color: '#FFFFFF', fontSize: 13 },
-  currentCopy: { flex: 1, justifyContent: 'center', gap: Spacing.two },
-  currentMeta: { color: '#EAF5FF', fontSize: 12 },
-  currentTitle: { color: '#FFFFFF', fontSize: 22, lineHeight: 27 },
-  currentBody: { color: '#EAF5FF', lineHeight: 17 },
-  shareButton: { minHeight: 38, borderRadius: Radius.small, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.three, alignSelf: 'flex-start' },
-  shareText: { color: '#3B82F6' },
   nextCard: { borderRadius: Radius.large, backgroundColor: '#FFFFFF', padding: Spacing.three, gap: Spacing.three, ...Shadow.soft },
   sectionTitle: { color: '#1E293B' },
   nextRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.three },
@@ -332,16 +319,20 @@ const styles = StyleSheet.create({
   filterText: { color: '#64748B', fontSize: 10, fontWeight: '700' },
   filterTextActive: { color: '#FFFFFF' },
   badgeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },
-  badgeCard: { width: '48.7%', minHeight: 82, borderRadius: Radius.medium, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', gap: Spacing.two, padding: Spacing.two, ...Shadow.soft },
-  lockedCard: { opacity: 0.72 },
+  badgeCard: { width: '48.7%', minHeight: 112, borderRadius: Radius.medium, backgroundColor: '#FFFFFF', borderWidth: 1, flexDirection: 'row', alignItems: 'center', gap: Spacing.two, padding: Spacing.two, overflow: 'hidden', ...Shadow.soft },
+  lockedCard: { opacity: 0.78, backgroundColor: '#F8FBFF' },
+  badgeAccentRail: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 4 },
+  badgeIconShell: { width: 58, height: 58, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   badgeImage: { width: 54, height: 54 },
-  badgeCopy: { flex: 1 },
-  badgeTitle: { color: '#1E293B', fontSize: 13 },
-  badgeCategory: { color: '#64748B', fontSize: 11 },
-  statusDot: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  badgeCopy: { flex: 1, gap: Spacing.one },
+  badgeTitle: { color: '#1E293B', fontSize: 13, lineHeight: 16 },
+  badgeCategoryPill: { alignSelf: 'flex-start', borderRadius: Radius.pill, paddingHorizontal: Spacing.two, paddingVertical: 3 },
+  badgeCategory: { fontSize: 10, fontWeight: '800' },
+  statusChip: { position: 'absolute', right: Spacing.two, top: Spacing.two, minHeight: 20, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.two },
   statusUnlocked: { backgroundColor: '#22C55E' },
   statusLocked: { backgroundColor: '#EAF5FF' },
-  statusText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
+  statusText: { color: '#FFFFFF', fontSize: 9, fontWeight: '900' },
+  statusTextLocked: { color: '#64748B' },
   numberBadge: { width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF5FF', borderWidth: 2, borderColor: '#22C55E' },
   numberBadgeLocked: { backgroundColor: '#EAF5FF', borderColor: '#64748B' },
   numberBadgeText: { color: '#22C55E', fontSize: 17, fontWeight: '900', lineHeight: 19 },

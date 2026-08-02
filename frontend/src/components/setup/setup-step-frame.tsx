@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -16,11 +17,7 @@ export function SetupStepFrame({ children, stepNumber, stepLabel, activeDotIndex
   return (
     <>
       <View style={styles.brandBlock}>
-        <View style={styles.logoMark}>
-          <ThemedText type="headline" style={styles.logoIcon}>
-            D
-          </ThemedText>
-        </View>
+        <Image source={require('@/assets/drop-the-vape/logo.png')} style={styles.logoImage} contentFit="contain" />
         <ThemedText type="smallBold" style={styles.logoText}>
           Drop Vape
         </ThemedText>
@@ -52,21 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.one,
   },
-  logoMark: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#EAF5FF',
-    borderWidth: 1,
-    borderColor: '#EAF5FF',
-  },
-  logoIcon: {
-    color: '#3B82F6',
-    fontSize: 20,
-    lineHeight: 24,
-  },
+  logoImage: { width: 44, height: 44 },
   logoText: {
     color: '#1E293B',
   },

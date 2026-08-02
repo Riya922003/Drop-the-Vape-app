@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from '@/lib/api-config';
+
 export type QuitProfileInput = {
   quitReason: string;
   vapesPerWeek: number;
@@ -17,7 +19,7 @@ export type QuitProfile = QuitProfileInput & {
   updatedAt: string;
 };
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:5000';
+const API_BASE_URL = getApiBaseUrl();
 
 async function parseResponse<T>(response: Response): Promise<T> {
   const payload = await response.json().catch(() => ({}));

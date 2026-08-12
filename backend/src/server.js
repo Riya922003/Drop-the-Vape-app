@@ -11,6 +11,91 @@ const { calculateProgress } = require("./progress");
 const app = express();
 const port = process.env.PORT || 5000;
 
+const APPLE_KEYS_URL = "https://appleid.apple.com/auth/keys";
+const APPLE_ISSUER = "https://appleid.apple.com";
+const APPLE_AUDIENCE = process.env.APPLE_CLIENT_ID || process.env.IOS_BUNDLE_ID || "com.tensorblue.dropthevape";
+let cachedAppleKeys;
+
+function base64UrlToBuffer(value) {
+  return Buffer.from(String(value).replace(/-/g, "+").replace(/_/g, "/"), "base64");
+}
+
+function decodeJwtPart(value) {
+  return JSON.parse(base64UrlToBuffer(value).toString("utf8"));
+}
+
+async function getAppleKeys() {
+  if (cachedAppleKeys) {
+    return cachedAppleKeys;
+  }
+
+  const response = await fetch(APPLE_KEYS_URL);
+  if (!response.ok) {
+    throw new Error("Unable to load Apple sign-in keys.");
+  }
+
+  const payload = await response.json();
+  cachedAppleKeys = Array.isArray(payload.keys) ? payload.keys : [];
+  return cachedAppleKeys;
+}
+
+async function verifyAppleIdentityToken(identityToken) {
+  try {
+    const token = String(identityToken || "");
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const [encodedHeader, encodedPayload, encodedSignature] = parts;
+    const header = decodeJwtPart(encodedHeader);
+    const payload = decodeJwtPart(encodedPayload);
+
+    if (header.alg !== "RS256") {
+      return null;
+    }
+
+    const keys = await getAppleKeys();
+    const key = keys.find((candidate) => candidate.kid === header.kid);
+    if (!key) {
+      cachedAppleKeys = null;
+      return null;
+    }
+
+    const verifier = crypto.createVerify("RSA-SHA256");
+    verifier.update(`${encodedHeader}.${encodedPayload}`);
+    verifier.end();
+
+    const publicKey = crypto.createPublicKey({ key, format: "jwk" });
+    const isValidSignature = verifier.verify(publicKey, base64UrlToBuffer(encodedSignature));
+    const now = Math.floor(Date.now() / 1000);
+
+    if (!isValidSignature || payload.iss !== APPLE_ISSUER || payload.aud !== APPLE_AUDIENCE || !payload.sub || Number(payload.exp) <= now) {
+      return null;
+    }
+
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+function displayNameFromApple(input, email) {
+  const name = String(input.name || "").trim();
+  if (name.length >= 2) {
+    return name;
+  }
+
+  const fullName = input.fullName || {};
+  const composedName = [fullName.givenName, fullName.familyName].filter(Boolean).join(" ").trim();
+  if (composedName.length >= 2) {
+    return composedName;
+  }
+
+  return email ? email.split("@")[0] : "Apple User";
+}
+
+
 app.use(cors());
 app.use(express.json());
 
@@ -181,6 +266,53 @@ app.post(
   })
 );
 
+app.post(
+  "/auth/apple",
+  asyncHandler(async (req, res) => {
+    const payload = await verifyAppleIdentityToken(req.body.identityToken);
+
+    if (!payload) {
+      return res.status(401).json({ message: "Apple sign in could not be verified." });
+    }
+
+    const appleSub = String(payload.sub);
+    const appleEmail = normalizeEmail(payload.email);
+
+    const existingAppleUser = await query("SELECT * FROM users WHERE apple_sub = $1", [appleSub]);
+    let user = mapUser(existingAppleUser.rows[0]);
+
+    if (!user) {
+      if (!appleEmail) {
+        return res.status(400).json({ message: "Apple did not provide an email for this account. Please use email sign in." });
+      }
+
+      const existingEmailUser = await query("SELECT id FROM users WHERE email = $1", [appleEmail]);
+      if (existingEmailUser.rows.length > 0) {
+        return res.status(409).json({ message: "An account with this email already exists. Please sign in with email first." });
+      }
+
+      const passwordRecord = hashPassword(crypto.randomBytes(32).toString("hex"));
+      const userResult = await query(
+        `INSERT INTO users (id, name, email, password_hash, password_salt, apple_sub, auth_provider)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING *`,
+        [
+          crypto.randomUUID(),
+          displayNameFromApple(req.body, appleEmail),
+          appleEmail,
+          passwordRecord.hash,
+          passwordRecord.salt,
+          appleSub,
+          "apple",
+        ]
+      );
+      user = mapUser(userResult.rows[0]);
+    }
+
+    const token = await createSession(user);
+    return res.json({ token, user: publicUser(user) });
+  })
+);
 app.get("/auth/me", requireAuth, (req, res) => {
   return res.json({ user: publicUser(req.user) });
 });

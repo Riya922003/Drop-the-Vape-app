@@ -1,14 +1,18 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "Drop The Vape",
+    "slug": "drop-the-vape",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/drop-the-vape/logo.png",
-    "scheme": "frontend",
+    "scheme": "dropthevape",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/drop-the-vape/logo.png"
+      "icon": "./assets/drop-the-vape/logo.png",
+      "bundleIdentifier": "com.tensorblue.dropthevape",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -16,7 +20,9 @@
         "foregroundImage": "./assets/drop-the-vape/logo.png",
         "monochromeImage": "./assets/drop-the-vape/logo.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.tensorblue.dropthevape",
+      "versionCode": 2
     },
     "web": {
       "output": "static",
@@ -35,8 +41,14 @@
       "expo-secure-store"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5e5aa2e8-b464-41d0-aa92-5944b112ab53"
+      },
+      "apiUrl": "https://orleans-number-commentary-radical.trycloudflare.com"
     }
   }
 }

@@ -29,6 +29,18 @@ async function initDatabase() {
   `);
 
   await query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS apple_sub text,
+    ADD COLUMN IF NOT EXISTS auth_provider text NOT NULL DEFAULT 'email'
+  `);
+
+  await query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS users_apple_sub_unique
+    ON users (apple_sub)
+    WHERE apple_sub IS NOT NULL
+  `);
+
+  await query(`
     CREATE TABLE IF NOT EXISTS sessions (
       token_hash text PRIMARY KEY,
       user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -67,6 +79,8 @@ function mapUser(row) {
     passwordHash: row.password_hash,
     passwordSalt: row.password_salt,
     createdAt: row.created_at,
+    appleSub: row.apple_sub,
+    authProvider: row.auth_provider,
   };
 }
 

@@ -15,6 +15,11 @@ export function getApiBaseUrl() {
     return process.env.EXPO_PUBLIC_API_URL;
   }
 
+  const configuredApiUrl = Constants.expoConfig?.extra?.apiUrl;
+  if (typeof configuredApiUrl === 'string' && configuredApiUrl.length > 0) {
+    return configuredApiUrl;
+  }
+
   const expoHostUrl = hostFromExpo();
   if (expoHostUrl) {
     return expoHostUrl;
@@ -22,3 +27,4 @@ export function getApiBaseUrl() {
 
   return Platform.OS === 'web' ? `http://localhost:${DEFAULT_BACKEND_PORT}` : `http://127.0.0.1:${DEFAULT_BACKEND_PORT}`;
 }
+

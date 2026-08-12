@@ -1,0 +1,69 @@
+﻿name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-backend-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy backend to VM
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Deploy over SSH
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+          VM_SSH_PORT: ${{ secrets.VM_SSH_PORT }}
+          VM_DEPLOY_PATH: ${{ secrets.VM_DEPLOY_PATH }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${VM_HOST}" ] || [ -z "${VM_USER}" ] || [ -z "${VM_SSH_PRIVATE_KEY}" ]; then
+            echo "Missing one or more required secrets: VM_HOST, VM_USER, VM_SSH_PRIVATE_KEY"
+            exit 1
+          fi
+
+          SSH_PORT="${VM_SSH_PORT:-22}"
+          DEPLOY_PATH="${VM_DEPLOY_PATH:-/home/azureuser/Drop-the-Vape-app}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${VM_SSH_PRIVATE_KEY}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${SSH_PORT}" -H "${VM_HOST}" >> ~/.ssh/known_hosts
+
+          ssh -i ~/.ssh/deploy_key -p "${SSH_PORT}" "${VM_USER}@${VM_HOST}" \
+            "VM_DEPLOY_PATH='${DEPLOY_PATH}' GH_USERNAME='${GH_USERNAME}' GH_TOKEN='${GH_TOKEN}' bash -s" <<'REMOTE'
+          set -euo pipefail
+
+          cd "${VM_DEPLOY_PATH}"
+
+          if [ -n "${GH_USERNAME:-}" ] && [ -n "${GH_TOKEN:-}" ]; then
+            git remote set-url origin "https://${GH_USERNAME}:${GH_TOKEN}@github.com/cumbersomeamir/drop-the-vape.git"
+          fi
+
+          git fetch origin main
+          git checkout main
+          git pull --ff-only origin main
+
+          if [ ! -f backend/.env ]; then
+            echo "Missing backend/.env on VM. Create it before deploying."
+            exit 1
+          fi
+
+          cd backend
+          sudo docker compose up -d --build
+          sudo docker compose ps
+          curl --fail --silent --show-error http://127.0.0.1:5000/health
+          REMOTE
+

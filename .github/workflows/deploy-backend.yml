@@ -29,13 +29,24 @@ jobs:
         run: |
           set -euo pipefail
 
+          VM_HOST="$(printf '%s' "${VM_HOST}" | tr -d '\r\n' | xargs)"
+          VM_USER="$(printf '%s' "${VM_USER}" | tr -d '\r\n' | xargs)"
+          VM_SSH_PORT="$(printf '%s' "${VM_SSH_PORT:-22}" | tr -d '\r\n' | xargs)"
+          VM_DEPLOY_PATH="$(printf '%s' "${VM_DEPLOY_PATH:-/home/azureuser/Drop-the-Vape-app}" | tr -d '\r\n' | xargs)"
+
           if [ -z "${VM_HOST}" ] || [ -z "${VM_USER}" ] || [ -z "${VM_SSH_PRIVATE_KEY}" ]; then
             echo "Missing one or more required secrets: VM_HOST, VM_USER, VM_SSH_PRIVATE_KEY"
             exit 1
           fi
 
-          SSH_PORT="${VM_SSH_PORT:-22}"
-          DEPLOY_PATH="${VM_DEPLOY_PATH:-/home/azureuser/Drop-the-Vape-app}"
+          if [[ "${VM_USER}" == *"@"* || "${VM_USER}" == *" "* ]]; then
+            echo "VM_USER must be only the Linux username, for example: azureuser"
+            echo "Do not put ssh commands, IP addresses, or user@host in VM_USER."
+            exit 1
+          fi
+
+          SSH_PORT="${VM_SSH_PORT}"
+          DEPLOY_PATH="${VM_DEPLOY_PATH}"
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           printf '%s\n' "${VM_SSH_PRIVATE_KEY}" > ~/.ssh/deploy_key
@@ -66,4 +77,5 @@ jobs:
           sudo docker compose ps
           curl --fail --silent --show-error http://127.0.0.1:5000/health
           REMOTE
+
 

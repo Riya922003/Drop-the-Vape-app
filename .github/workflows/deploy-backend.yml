@@ -75,7 +75,22 @@ jobs:
           cd backend
           sudo docker compose up -d --build
           sudo docker compose ps
-          curl --fail --silent --show-error http://127.0.0.1:5000/health
+
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error http://127.0.0.1:5000/health; then
+              echo "Backend health check passed."
+              exit 0
+            fi
+
+            echo "Backend is not ready yet. Health check attempt ${attempt}/30 failed."
+            sleep 2
+          done
+
+          echo "Backend did not pass health check after waiting."
+          sudo docker compose ps
+          sudo docker compose logs --tail=100 api
+          exit 1
           REMOTE
+
 
 

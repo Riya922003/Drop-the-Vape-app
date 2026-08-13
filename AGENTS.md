@@ -1,4 +1,4 @@
-﻿
+
 ## Project Progress Handoff
 
 ### Current Goal
@@ -154,8 +154,8 @@
 
 ### Git And Repo State
 - Project root currently contains `backend`, `frontend`, `phases`, and `temp`.
-- `frontend` is currently the Git repo.
-- Project root was not a Git repo during this handoff.
-- User requested `.gitignore` for `phases` and `temp`, plus pushing to `https://github.com/Riya922003/Drop-the-Vape-app.git`.
-- Do not silently delete or move `frontend/.git`.
-- If turning the root into the main Git repo, ask first because the nested `frontend/.git` must be handled explicitly.
+- Project root is the active Git repo for commits and pushes.
+- Push completed work to `origin` on `main`: `https://github.com/Riya922003/Drop-the-Vape-app.git`.
+- Do not push to `cumbersomeamir` unless the user explicitly asks for that remote.
+- Do not commit `.env` files, accidental root package install files, or unrelated deletions.
+- Do not silently delete or move `frontend/.git` if it exists; ask first because nested Git state must be handled explicitly.

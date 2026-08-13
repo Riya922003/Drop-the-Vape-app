@@ -1,4 +1,4 @@
-﻿const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 function roundMoney(value) {
   return Math.round(value * 100) / 100;
@@ -53,11 +53,13 @@ function achievementMilestones({ daysVapeFree, currentStreak, moneySaved, vapesA
   ];
 }
 
-function calculateProgress(profile, now = new Date()) {
+function calculateProgress(profile, options = {}) {
+  const now = options.now || new Date();
   const daysVapeFree = wholeDaysBetween(profile.quitStartDate, now);
   const moneySaved = roundMoney(daysVapeFree * profile.estimatedDailySpend);
   const vapesAvoided = Math.floor(daysVapeFree * profile.estimatedDailyVapeUsage);
-  const currentStreak = daysVapeFree;
+  const currentStreak = Number(options.currentStreak || 0);
+  const breathHold = options.breathHold || null;
   const target = goalTarget(profile);
   const targetProgressValue = target.type === "money" ? moneySaved : daysVapeFree;
   const goalProgressPercent = Math.min(100, Math.floor((targetProgressValue / target.target) * 100));
@@ -69,6 +71,23 @@ function calculateProgress(profile, now = new Date()) {
     currentStreak,
     moneySaved,
     vapesAvoided,
+    activities: {
+      breathHold: breathHold
+        ? {
+            todayStatus: breathHold.todayStatus,
+            streak: breathHold.currentStreak,
+            bestHoldSeconds: breathHold.bestHoldSeconds,
+            lastHoldSeconds: breathHold.lastHoldSeconds,
+            completedCount: breathHold.completedCount,
+          }
+        : {
+            todayStatus: "available",
+            streak: currentStreak,
+            bestHoldSeconds: 0,
+            lastHoldSeconds: 0,
+            completedCount: 0,
+          },
+    },
     goal: {
       label: target.label,
       current: targetProgressValue,

@@ -79,6 +79,7 @@ export default function ProgressRoute() {
       onOpenHome={() => router.push('/home')}
       onOpenProgress={() => router.push('/progress')}
       onOpenPremium={() => router.push('/premium')}
+      onOpenBreathHold={() => router.push('/breath-hold' as never)}
     />
   );
 }

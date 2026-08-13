@@ -19,7 +19,6 @@ const dashboardIcons = [
 const dashboardCardImages = {
   motivation: require('@/assets/drop-the-vape/dashboard/11 (1).png'),
   support: require('@/assets/drop-the-vape/dashboard/11 (3).png'),
-  journal: require('@/assets/drop-the-vape/dashboard/11 (2).png'),
 };
 
 const achievementIcons = [
@@ -111,8 +110,8 @@ export function HomeDashboard({ progress, userName, error, isRefreshing, onRefre
           <View style={styles.streakCard}>
             <Image source={dashboardIcons[4]} style={styles.streakIconImage} contentFit="contain" />
             <ThemedText type="headline" style={styles.streakNumber}>{progress.currentStreak}</ThemedText>
-            <ThemedText type="smallBold" style={styles.streakLabel}>Day Streak</ThemedText>
-            <ThemedText type="small" style={styles.streakSub}>Keep it up!</ThemedText>
+            <ThemedText type="smallBold" style={styles.streakLabel}>Breath Streak</ThemedText>
+            <ThemedText type="small" style={styles.streakSub}>Complete daily</ThemedText>
           </View>
         </View>
 
@@ -145,17 +144,8 @@ export function HomeDashboard({ progress, userName, error, isRefreshing, onRefre
 
         <View style={styles.smallCardsRow}>
           <InfoCard title="Daily Motivation" body="The best time to quit was yesterday. The next best time is now." accent="#3B82F6" image={dashboardCardImages.motivation} />
-          <InfoCard title="Craving Support" body="Having a craving? Use these tools to get through it." accent="#22C55E" image={dashboardCardImages.support} action="-&gt;" onPress={onOpenSupport} />
+          <InfoCard title="Craving Support" body="Use a breath hold check to move through the moment." accent="#22C55E" image={dashboardCardImages.support} action="-&gt;" onPress={onOpenSupport} />
         </View>
-
-        <Pressable style={({ pressed }) => [styles.journalCard, pressed && styles.pressed]}>
-          <Image source={dashboardCardImages.journal} style={styles.journalImage} contentFit="contain" />
-          <View style={styles.journalCopy}>
-            <ThemedText type="smallBold" style={styles.journalTitle}>Your Journal</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">Write your thoughts, track your mood, and reflect on your progress.</ThemedText>
-          </View>
-          <View style={styles.checkInButton}><ThemedText type="smallBold" style={styles.checkInText}>Check In -&gt;</ThemedText></View>
-        </Pressable>
       </ScrollView>
       <BottomTabs active="home" variant="floating" onOpenHome={onOpenHome} onOpenProgress={onOpenProgress} onOpenPremium={onOpenPremium} onOpenAchievements={onOpenAchievements} onOpenRightTab={onOpenProfile} />
     </Screen>
@@ -243,12 +233,6 @@ const styles = StyleSheet.create({
   infoBody: { fontSize: 10, lineHeight: 14, maxWidth: '72%' },
   infoImage: { position: 'absolute', right: 0, bottom: 0, width: 66, height: 66, opacity: 0.9 },
   infoAction: { position: 'absolute', right: 14, bottom: 28 },
-  journalCard: { minHeight: 72, borderRadius: Radius.large, backgroundColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', gap: Spacing.two, padding: Spacing.two, ...Shadow.soft },
-  journalImage: { width: 42, height: 42 },
-  journalCopy: { flex: 1 },
-  journalTitle: { color: '#3B82F6' },
-  checkInButton: { minHeight: 42, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: Spacing.three },
-  checkInText: { color: '#3B82F6', fontSize: 12 },
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   error: { color: '#DC2626', textAlign: 'center' },
   pressed: { opacity: 0.75 },

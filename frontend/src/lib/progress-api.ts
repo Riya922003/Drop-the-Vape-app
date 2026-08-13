@@ -14,6 +14,15 @@ export type UserProgress = {
   currentStreak: number;
   moneySaved: number;
   vapesAvoided: number;
+  activities?: {
+    breathHold?: {
+      todayStatus: string;
+      streak: number;
+      bestHoldSeconds: number;
+      lastHoldSeconds: number;
+      completedCount: number;
+    };
+  };
   goal: {
     label: string;
     current: number;
@@ -24,6 +33,10 @@ export type UserProgress = {
 };
 
 const API_BASE_URL = getApiBaseUrl();
+
+function userTimezone() {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
 
 async function parseResponse<T>(response: Response): Promise<T> {
   const payload = await response.json().catch(() => ({}));
@@ -36,8 +49,9 @@ async function parseResponse<T>(response: Response): Promise<T> {
 }
 
 export async function getProgress(token: string) {
-  const response = await fetch(`${API_BASE_URL}/progress/me`, {
-    headers: { Authorization: `Bearer ${token}` },
+  const timezone = encodeURIComponent(userTimezone());
+  const response = await fetch(`${API_BASE_URL}/progress/me?timezone=${timezone}`, {
+    headers: { Authorization: `Bearer ${token}`, 'X-Timezone': userTimezone() },
   });
 
   return parseResponse<{ progress: UserProgress }>(response);

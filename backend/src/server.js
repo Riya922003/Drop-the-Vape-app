@@ -2,10 +2,12 @@ const crypto = require("crypto");
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const { OAuth2Client } = require("google-auth-library");
 
 dotenv.config();
 
 const { initDatabase, mapQuitProfile, mapUser, query } = require("./db");
+const { completeBreathHold, getBreathHoldHistory, getBreathHoldSummary, getBreathHoldTrend, leaveBreathHold, startBreathHold } = require("./breathHold");
 const { calculateProgress } = require("./progress");
 
 const app = express();
@@ -14,6 +16,8 @@ const port = process.env.PORT || 5000;
 const APPLE_KEYS_URL = "https://appleid.apple.com/auth/keys";
 const APPLE_ISSUER = "https://appleid.apple.com";
 const APPLE_AUDIENCE = process.env.APPLE_CLIENT_ID || process.env.IOS_BUNDLE_ID || "com.tensorblue.dropthevape";
+const GOOGLE_AUDIENCES = [process.env.GOOGLE_WEB_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID].filter(Boolean);
+const googleClient = new OAuth2Client();
 let cachedAppleKeys;
 
 function base64UrlToBuffer(value) {
@@ -93,6 +97,38 @@ function displayNameFromApple(input, email) {
   }
 
   return email ? email.split("@")[0] : "Apple User";
+}
+
+function displayNameFromGoogle(payload) {
+  const name = String(payload.name || "").trim();
+  if (name.length >= 2) {
+    return name;
+  }
+
+  const email = normalizeEmail(payload.email);
+  return email ? email.split("@")[0] : "Google User";
+}
+
+async function verifyGoogleIdentityToken(idToken) {
+  if (GOOGLE_AUDIENCES.length === 0) {
+    throw new Error("GOOGLE_WEB_CLIENT_ID or GOOGLE_IOS_CLIENT_ID is required for Google sign in.");
+  }
+
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: String(idToken || ""),
+      audience: GOOGLE_AUDIENCES,
+    });
+    const payload = ticket.getPayload();
+
+    if (!payload?.sub || !payload.email || payload.email_verified !== true) {
+      return null;
+    }
+
+    return payload;
+  } catch {
+    return null;
+  }
 }
 
 
@@ -199,6 +235,17 @@ function deriveQuitProfile(input, userId, existingProfile) {
   };
 }
 
+async function progressForUser(userId, timezone) {
+  const result = await query("SELECT * FROM quit_profiles WHERE user_id = $1", [userId]);
+  const profile = mapQuitProfile(result.rows[0]);
+
+  if (!profile) {
+    return null;
+  }
+
+  const breathHold = await getBreathHoldSummary(query, userId, timezone);
+  return calculateProgress(profile, { currentStreak: breathHold.currentStreak, breathHold });
+}
 app.get("/", (req, res) => {
   res.json({
     service: "drop-the-vape-backend",
@@ -259,6 +306,43 @@ app.post(
 
     if (!user || !verifyPassword(password, user)) {
       return res.status(401).json({ message: "Email or password is incorrect." });
+    }
+
+    const token = await createSession(user);
+    return res.json({ token, user: publicUser(user) });
+  })
+);
+
+app.post(
+  "/auth/google",
+  asyncHandler(async (req, res) => {
+    const payload = await verifyGoogleIdentityToken(req.body.idToken);
+
+    if (!payload) {
+      return res.status(401).json({ message: "Google sign in could not be verified." });
+    }
+
+    const googleSub = String(payload.sub);
+    const googleEmail = normalizeEmail(payload.email);
+    const existingGoogleUser = await query("SELECT * FROM users WHERE google_sub = $1", [googleSub]);
+    let user = mapUser(existingGoogleUser.rows[0]);
+
+    if (!user) {
+      const existingEmailUser = await query("SELECT * FROM users WHERE email = $1", [googleEmail]);
+      user = mapUser(existingEmailUser.rows[0]);
+
+      if (user) {
+        await query("UPDATE users SET google_sub = $1 WHERE id = $2", [googleSub, user.id]);
+      } else {
+        const passwordRecord = hashPassword(crypto.randomBytes(32).toString("hex"));
+        const userResult = await query(
+          `INSERT INTO users (id, name, email, password_hash, password_salt, google_sub, auth_provider)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
+           RETURNING *`,
+          [crypto.randomUUID(), displayNameFromGoogle(payload), googleEmail, passwordRecord.hash, passwordRecord.salt, googleSub, "google"]
+        );
+        user = mapUser(userResult.rows[0]);
+      }
     }
 
     const token = await createSession(user);
@@ -380,14 +464,69 @@ app.get(
   "/progress/me",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const result = await query("SELECT * FROM quit_profiles WHERE user_id = $1", [req.user.id]);
-    const profile = mapQuitProfile(result.rows[0]);
+    const progress = await progressForUser(req.user.id, req.query.timezone || req.headers["x-timezone"]);
 
-    if (!profile) {
+    if (!progress) {
       return res.status(404).json({ message: "Quit profile has not been set up yet." });
     }
 
-    return res.json({ progress: calculateProgress(profile) });
+    return res.json({ progress });
+  })
+);
+
+app.get(
+  "/breath-hold/summary",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const summary = await getBreathHoldSummary(query, req.user.id, req.query.timezone || req.headers["x-timezone"]);
+    return res.json({ summary });
+  })
+);
+
+app.post(
+  "/breath-hold/start",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const result = await startBreathHold(query, req.user.id, req.body.timezone || req.headers["x-timezone"]);
+    return res.status(201).json(result);
+  })
+);
+
+app.post(
+  "/breath-hold/:attemptId/complete",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const timezone = req.body.timezone || req.headers["x-timezone"];
+    const result = await completeBreathHold(query, req.user.id, req.params.attemptId, { ...req.body, timezone });
+    const progress = await progressForUser(req.user.id, timezone);
+    return res.json({ ...result, progress });
+  })
+);
+
+app.post(
+  "/breath-hold/:attemptId/leave",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const result = await leaveBreathHold(query, req.user.id, req.params.attemptId, req.body.timezone || req.headers["x-timezone"]);
+    return res.json(result);
+  })
+);
+
+app.get(
+  "/breath-hold/history",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const result = await getBreathHoldHistory(query, req.user.id, req.query.timezone || req.headers["x-timezone"], req.query.limit);
+    return res.json(result);
+  })
+);
+
+app.get(
+  "/breath-hold/trend",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const result = await getBreathHoldTrend(query, req.user.id, req.query.timezone || req.headers["x-timezone"], req.query.days);
+    return res.json(result);
   })
 );
 app.patch(
@@ -434,7 +573,8 @@ app.patch(
 
 app.use((error, req, res, next) => {
   console.error(error);
-  return res.status(500).json({ message: "Something went wrong. Please try again." });
+  const statusCode = Number(error.statusCode) || 500;
+  return res.status(statusCode).json({ message: statusCode === 500 ? "Something went wrong. Please try again." : error.message });
 });
 
 initDatabase()

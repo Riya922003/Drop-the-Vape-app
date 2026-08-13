@@ -125,6 +125,37 @@
   - Saved $100 image
   - Vape-Free Hero image
 
+### Phase 08 Breath Hold Work
+- Breath hold exercise implementation started from `phases/phase08/spec.md`.
+- Added backend persistence for breath hold attempts in `backend/src/db.js` with `breath_hold_attempts`.
+- Added backend breath hold logic in `backend/src/breathHold.js` for:
+  - start attempt
+  - complete attempt
+  - leave attempt
+  - summary
+  - history
+  - trend
+  - backend-derived completion streak
+- Added authenticated backend routes:
+  - `GET /breath-hold/summary`
+  - `POST /breath-hold/start`
+  - `POST /breath-hold/:attemptId/complete`
+  - `POST /breath-hold/:attemptId/leave`
+  - `GET /breath-hold/history`
+  - `GET /breath-hold/trend`
+- `/progress/me` now uses breath hold completion streak for `currentStreak`.
+- `daysVapeFree` remains the quit-duration metric for quit time, money saved, vapes avoided, health recovery, and day-based milestones.
+- Added frontend API client at `frontend/src/lib/breath-hold-api.ts`.
+- Added route wrapper at `frontend/src/app/breath-hold.tsx`.
+- Added screen implementation at `frontend/src/components/breath-hold/breath-hold-screen.tsx`.
+- Home Craving Support now opens `/breath-hold`.
+- Progress screen now has a Breath Hold Exercise entry card.
+- Streak labels in home/progress were updated to reflect breath hold streak meaning.
+- Backend syntax checks passed for:
+  - `backend/src/breathHold.js`
+  - `backend/src/progress.js`
+  - `backend/src/server.js`
+- Frontend typecheck still reports only the known unrelated starter-template errors in explore/app-tabs/external-link/collapsible after Phase 8 route typing was fixed.
 ### Libraries And Assets
 - Use `lucide-react-native` for new icons going forward when an icon is better than an image.
 - Do not install dependencies automatically. If missing, ask the user to run:

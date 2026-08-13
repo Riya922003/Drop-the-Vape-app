@@ -64,6 +64,7 @@ type ProgressDashboardProps = {
   onOpenHome: () => void;
   onOpenProgress: () => void;
   onOpenPremium: () => void;
+  onOpenBreathHold?: () => void;
   activeTab?: 'home' | 'progress';
 };
 
@@ -105,7 +106,7 @@ function graphSeries(progress: UserProgress) {
   return points;
 }
 
-export function ProgressDashboard({ progress, error, isRefreshing, onRefresh, onRetry, onOpenAchievements, onOpenProfile, onOpenHome, onOpenProgress, onOpenPremium, activeTab = 'home' }: ProgressDashboardProps) {
+export function ProgressDashboard({ progress, error, isRefreshing, onRefresh, onRetry, onOpenAchievements, onOpenProfile, onOpenHome, onOpenProgress, onOpenPremium, onOpenBreathHold, activeTab = 'home' }: ProgressDashboardProps) {
   const nextMilestone = nextDayMilestone(progress.daysVapeFree);
   const nextPercent = Math.min(100, Math.round((progress.daysVapeFree / nextMilestone) * 100));
   const recovery = healthPercent(progress.daysVapeFree);
@@ -128,7 +129,7 @@ export function ProgressDashboard({ progress, error, isRefreshing, onRefresh, on
           <View style={styles.streakMain}>
             <ThemedText type="headline" style={styles.streakTitle}>{progress.daysVapeFree} Days Vape-Free</ThemedText>
             <View style={styles.streakStats}>
-              <MiniStat label="Current Streak" value={`${progress.currentStreak} Days`} />
+              <MiniStat label="Breath Streak" value={`${progress.currentStreak} Days`} />
               <View style={styles.divider} />
               <MiniStat label="Next Milestone" value={`${nextMilestone} Days`} />
             </View>
@@ -143,6 +144,14 @@ export function ProgressDashboard({ progress, error, isRefreshing, onRefresh, on
         </View>
 
         {error ? <View style={styles.errorCard}><ThemedText style={styles.error}>{error}</ThemedText><Button label="Try again" onPress={onRetry} /></View> : null}
+
+        <Pressable onPress={onOpenBreathHold} style={({ pressed }) => [styles.breathCard, pressed && styles.pressed]}>
+          <View>
+            <ThemedText type="smallBold" style={styles.breathTitle}>Breath Hold Exercise</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">Complete today's check to grow your streak.</ThemedText>
+          </View>
+          <ThemedText type="headline" style={styles.breathAction}>Start</ThemedText>
+        </Pressable>
 
         <View style={styles.metricGrid}>
           <MetricCard image={dashboardIcons[0]} title="Health Recovery" label="Lung recovery" value={`${recovery}%`} color="#22C55E" progress={recovery} />
@@ -266,6 +275,10 @@ const styles = StyleSheet.create({
   ringLabel: { color: '#EAF5FF', fontSize: 9, lineHeight: 11, textAlign: 'center' },
   errorCard: { gap: Spacing.three, borderWidth: 1, borderColor: '#FECACA', borderRadius: Radius.large, backgroundColor: '#FFF7F7', padding: Spacing.three },
   error: { color: '#DC2626', textAlign: 'center' },
+  breathCard: { minHeight: 76, borderRadius: 14, backgroundColor: '#EAF5FF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.three, padding: Spacing.three, ...Shadow.soft },
+  breathTitle: { color: '#1E293B', fontSize: 14 },
+  breathAction: { color: '#3B82F6', fontSize: 18 },
+  pressed: { opacity: 0.75 },
   metricGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },
   metricCard: { width: '48.7%', minHeight: 105, borderRadius: 14, backgroundColor: '#FFFFFF', flexDirection: 'row', gap: Spacing.two, padding: Spacing.three, ...Shadow.soft },
   metricIcon: { width: 43, height: 43, borderRadius: 12, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },

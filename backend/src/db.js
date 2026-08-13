@@ -31,6 +31,7 @@ async function initDatabase() {
   await query(`
     ALTER TABLE users
     ADD COLUMN IF NOT EXISTS apple_sub text,
+    ADD COLUMN IF NOT EXISTS google_sub text,
     ADD COLUMN IF NOT EXISTS auth_provider text NOT NULL DEFAULT 'email'
   `);
 
@@ -38,6 +39,12 @@ async function initDatabase() {
     CREATE UNIQUE INDEX IF NOT EXISTS users_apple_sub_unique
     ON users (apple_sub)
     WHERE apple_sub IS NOT NULL
+  `);
+
+  await query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub_unique
+    ON users (google_sub)
+    WHERE google_sub IS NOT NULL
   `);
 
   await query(`
@@ -65,6 +72,40 @@ async function initDatabase() {
       updated_at timestamptz NOT NULL DEFAULT now()
     )
   `);
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS breath_hold_attempts (
+      id uuid PRIMARY KEY,
+      user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      local_date date NOT NULL,
+      status text NOT NULL CHECK (status IN ('in_progress', 'completed', 'left')),
+      hold_seconds integer CHECK (hold_seconds IS NULL OR hold_seconds > 0),
+      feeling text CHECK (feeling IS NULL OR feeling IN ('easy', 'okay', 'hard', 'dizzy', 'other')),
+      note text,
+      started_at timestamptz NOT NULL,
+      completed_at timestamptz,
+      left_at timestamptz,
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now()
+    )
+  `);
+
+  await query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS breath_hold_completed_user_date_unique
+    ON breath_hold_attempts (user_id, local_date)
+    WHERE status = 'completed'
+  `);
+
+  await query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS breath_hold_in_progress_user_date_unique
+    ON breath_hold_attempts (user_id, local_date)
+    WHERE status = 'in_progress'
+  `);
+
+  await query(`
+    CREATE INDEX IF NOT EXISTS breath_hold_attempts_user_date_idx
+    ON breath_hold_attempts (user_id, local_date DESC)
+  `);
 }
 
 function mapUser(row) {
@@ -80,6 +121,7 @@ function mapUser(row) {
     passwordSalt: row.password_salt,
     createdAt: row.created_at,
     appleSub: row.apple_sub,
+    googleSub: row.google_sub,
     authProvider: row.auth_provider,
   };
 }

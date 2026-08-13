@@ -38,7 +38,13 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.465910874815-uroaqcj6i31kcgt6elpch835p03osn84"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
